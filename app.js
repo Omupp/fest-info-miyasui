@@ -289,6 +289,18 @@ function renderOrgs() {
   }).join("");
 }
 
+// 一番下の「参考（一次情報）」：出どころごとの URL と、企画ごとの元のページ
+function sourcesHTML() {
+  const shown = (u) => { try { return decodeURI(u); } catch { return u; } };
+  const li = (label, what, url) => `<li><span class="src-label">${esc(label)}</span>${what ? `<span class="src-what">${esc(what)}</span>` : ""}`
+    + (url ? `<a class="src-url" href="${esc(safeUrl(url))}" target="_blank" rel="noopener">${esc(shown(url))}</a>` : "") + `</li>`;
+  const evs = [...EVENTS].sort((a, b) => a.title.localeCompare(b.title, "ja"));
+  return `<section class="sources" aria-labelledby="src-h"><h2 id="src-h">参考（一次情報）</h2>
+    <ul>${(FEST.sources || []).map((x) => li(x.label, x.what, x.url)).join("")}</ul>
+    <details><summary>企画ごとのページ（${evs.length}件）</summary><ul>${evs.map((e) => li(e.title, "", e.url)).join("")}</ul></details>
+  </section>`;
+}
+
 /* ---------- 共通 ---------- */
 
 function renderDays(el, opts, cur, onPick) {
@@ -341,7 +353,8 @@ async function main() {
   const upd = fest.updated_at ? fest.updated_at.replace(/^\d{4}-(\d\d)-(\d\d)T(\d\d:\d\d).*/, (_, m, d, t) => `${+m}/${+d} ${t}`) : "";
   $("foot").innerHTML = `<p>非公式のまとめです。最新の情報は<a href="https://itlfest.com/" target="_blank" rel="noopener">公式サイト</a>でご確認ください。</p>
     <p>企画の情報は<a href="${esc(safeUrl(fest.source))}" target="_blank" rel="noopener">学祭ポータル</a>（C3 | Creative Computing Club）から。画像と文章は iTLFest.実行委員会と各団体のものです。時刻の一部はポスターと公式サイトから補いました。</p>
-    ${upd ? `<p>データの更新：${esc(upd)}</p>` : ""}`;
+    ${upd ? `<p>データの更新：${esc(upd)}</p>` : ""}
+    ${sourcesHTML()}`;
 
   renderInfo();
   renderTime();

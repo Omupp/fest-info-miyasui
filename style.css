@@ -190,6 +190,15 @@ table.ledger { width: 100%; border-collapse: collapse; }
 
 footer.site { margin: 36px 0 24px; padding-top: 12px; border-top: 1px solid var(--rule); color: var(--sub); font-size: 13px; }
 footer.site p { margin: 4px 0; }
+.sources { margin-top: 20px; color: var(--fg); }
+.sources h2 { font-size: 15px; margin: 0 0 4px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-strong); }
+.sources ul { list-style: none; margin: 0; padding: 0; }
+.sources li { padding: 8px 0; border-bottom: 1px solid var(--rule); }
+.sources .src-label { font-weight: 700; }
+.sources .src-what { color: var(--sub); margin-left: 8px; }
+.sources .src-url { display: block; overflow-wrap: anywhere; }
+.sources details { margin-top: 4px; }
+.sources summary { min-height: var(--tap); display: flex; align-items: center; cursor: pointer; font-weight: 700; border-bottom: 1px solid var(--rule); }
 
 /* 詳細 */
 dialog {

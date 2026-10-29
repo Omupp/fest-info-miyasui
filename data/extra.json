@@ -36,6 +36,43 @@
     "label": "学祭ポータル",
     "url": "https://gakusai-search.github.io/"
    }
+  ],
+  "sources": [
+   {
+    "label": "学祭ポータル",
+    "what": "企画・団体・ポスター",
+    "url": "https://gakusai-search.github.io/"
+   },
+   {
+    "label": "iTLFest. 公式サイト「開催概要」",
+    "what": "日時・会場",
+    "url": "https://itlfest.com/%e9%96%8b%e5%82%ac%e6%a6%82%e8%a6%81/"
+   },
+   {
+    "label": "iTLFest. 公式サイト「今年の学祭のテーマ」",
+    "what": "テーマ",
+    "url": "https://itlfest.com/2026/10/25/%e4%bb%8a%e5%b9%b4%e3%81%ae%e5%ad%a6%e7%a5%ad%e3%81%ae%e3%83%86%e3%83%bc%e3%83%9e/"
+   },
+   {
+    "label": "iTLFest. 公式サイト「食品販売について」",
+    "what": "食品販売",
+    "url": "https://itlfest.com/2026/10/25/%e9%a3%9f%e5%93%81%e8%b2%a9%e5%a3%b2%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6/"
+   },
+   {
+    "label": "iTLFest. 公式 Instagram",
+    "what": "",
+    "url": "https://www.instagram.com/festival_itl"
+   },
+   {
+    "label": "iTLFest. 公式 X",
+    "what": "",
+    "url": "https://x.com/Festival_iTL"
+   },
+   {
+    "label": "iTL軽音楽サークルのタイムテーブル（画像）",
+    "what": "軽音の出演順",
+    "url": ""
+   }
   ]
  },
  "events": {
