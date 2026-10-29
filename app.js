@@ -274,7 +274,8 @@ function renderAllday(day) {
     if (!floors.has(k)) floors.set(k, []);
     floors.get(k).push(e);
   }
-  $("allday").innerHTML = [...floors.keys()].sort((a, b) => a - b).map((f) => `<div class="dir-floor">
+  // 案内板と同じく上の階ほど上に（階が分からないものは最後）
+  $("allday").innerHTML = [...floors.keys()].sort((a, b) => (a === 99) - (b === 99) || b - a).map((f) => `<div class="dir-floor">
     <div class="dir-f tnum" aria-hidden="true">${f === 99 ? "他" : `${f}F`}</div>
     <ul class="dir-list" aria-label="${f === 99 ? "その他" : `${f}階`}">${floors.get(f).map((e) => {
       // 時刻の入った注記を 1 文だけ（終日と同じ「10:00〜17:00」は書かない）
