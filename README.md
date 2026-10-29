@@ -12,7 +12,8 @@ iTLFest.2026（中央大学 市ヶ谷田町キャンパス・2026/10/31〜11/1�
 | `data/extra.json` | ポスターと公式サイトから補った時刻・注記、開催の概要（手で書く） |
 | `img/posters/` | 企画のポスター（幅 960px に縮小） |
 | `tools/scrape.py` | 学祭ポータルを読んで `data/fest.json` を作る（Python 標準ライブラリのみ） |
-| `.github/workflows/refresh.yml` | 1 時間おきに読み直し、変わっていたら commit（11/2 まで） |
+| `tools/trashcan-refresh.sh` | 自動更新。管理者のサーバーが 30 分おきに動かし、変わっていたら commit して push（11/2 まで） |
+| `.github/workflows/refresh.yml` | 同じ取り込みを手で動かす予備（Actions → refresh → Run workflow） |
 
 ## 出典
 
