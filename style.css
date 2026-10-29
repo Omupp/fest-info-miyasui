@@ -71,7 +71,7 @@ a, button, summary { -webkit-tap-highlight-color: transparent; }
 .tag.live { color: var(--live); background: var(--live-bg); }
 
 /* 見出し */
-header.site { padding: calc(env(safe-area-inset-top) + 36px) 4px 10px; }
+header.site { padding: 32px 4px 10px; }
 .eyebrow { margin: 0 0 8px; font-size: 13px; font-weight: 700; color: var(--sub); }
 .eyebrow .sepbar { margin: 0 6px; color: var(--chev); }
 header.site h1 { margin: 0; font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -.01em; }
