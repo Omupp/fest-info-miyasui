@@ -262,16 +262,34 @@ function renderTime() {
   updateHint();
 
   $("allday-head").innerHTML = `終日<small>${esc(FEST.open)}〜${esc(FEST.close)}</small>`;
-  $("allday").innerHTML = alldayItems(day).map((e) => {
-    // 一覧には時刻の入った注記を 1 文だけ（終日と同じ「10:00〜17:00」は書かない）
-    const full = `${FEST.open}〜${FEST.close}`;
-    const note = e.notes.flatMap((n) => n.text.split("。")).find((t) => /\d:\d\d/.test(t) && t.trim() !== full);
-    return `<li><button type="button" class="row" data-id="${esc(e.id)}"><span class="r-main">
-      <span class="r-title">${esc(e.title)}</span>
-      <span class="r-meta">${esc(place(e))}${mustTag(e)}</span>
-      ${note ? `<span class="r-meta">${esc(note.trim())}</span>` : ""}
-    </span>${CHEV}</button></li>`;
-  }).join("") || `<li class="empty">なし</li>`;
+  renderAllday(day);
+}
+
+// 終日の企画：ビルの案内板のように、左に大きく階、右にその階の企画と教室番号
+function renderAllday(day) {
+  const full = `${FEST.open}〜${FEST.close}`;
+  const floors = new Map();
+  for (const e of alldayItems(day)) {
+    const k = e.floor ?? 99;
+    if (!floors.has(k)) floors.set(k, []);
+    floors.get(k).push(e);
+  }
+  $("allday").innerHTML = [...floors.keys()].sort((a, b) => a - b).map((f) => `<div class="dir-floor">
+    <div class="dir-f tnum" aria-hidden="true">${f === 99 ? "他" : `${f}F`}</div>
+    <ul class="dir-list" aria-label="${f === 99 ? "その他" : `${f}階`}">${floors.get(f).map((e) => {
+      // 時刻の入った注記を 1 文だけ（終日と同じ「10:00〜17:00」は書かない）
+      const note = e.notes.flatMap((n) => n.text.split("。")).find((t) => /\d:\d\d/.test(t) && t.trim() !== full);
+      const num = /^(\d+)教室$/.exec(e.room); // 「401教室」は右に番号だけ。それ以外の場所は名前の下に
+      return `<li><button type="button" class="dir-row" data-id="${esc(e.id)}">
+        <span class="r-main">
+          <span class="r-title">${esc(e.title)}${mustTag(e)}</span>
+          ${num ? "" : `<span class="r-meta">${esc(e.room)}</span>`}
+          ${note ? `<span class="r-meta">${esc(note.trim())}</span>` : ""}
+        </span>
+        ${num ? `<span class="dir-room tnum">${esc(num[1])}</span>` : ""}${CHEV}
+      </button></li>`;
+    }).join("")}</ul>
+  </div>`).join("") || `<p class="empty">なし</p>`;
 }
 
 /* ---------- パンフ ---------- */

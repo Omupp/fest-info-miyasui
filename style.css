@@ -5,6 +5,7 @@
   --fill: #e6e6eb;
   --fill-2: #f2f2f7;
   --press: #e5e5ea;
+  --floor-bg: #e9e9ee;
   --seg-on: #fff;
   --fg: #111;
   --sub: #6c6c70;
@@ -30,6 +31,7 @@
     --fill: #2c2c2e;
     --fill-2: #2c2c2e;
     --press: #2c2c2e;
+    --floor-bg: #2c2c2e;
     --seg-on: #636366;
     --fg: #f2f2f7;
     --sub: #a1a1a6;
@@ -142,6 +144,25 @@ h2.sec small { font-size: 14px; font-weight: 600; color: var(--sub); margin-left
 .nowbox.done { padding-bottom: 14px; }
 .nowbox.done h2 { color: var(--fg); font-size: 18px; }
 .nb-note { margin: 4px 16px 0; color: var(--sub); }
+
+/* 終日の企画：階ごとの案内板 */
+.dir { background: var(--card); border-radius: var(--r-card); overflow: hidden; }
+.dir-floor { display: flex; }
+.dir-floor + .dir-floor { border-top: 1px solid var(--sep); }
+.dir-f {
+  flex: 0 0 60px; display: flex; justify-content: center; align-items: flex-start;
+  padding-top: 15px; background: var(--floor-bg); font-size: 22px; font-weight: 800; line-height: 1.2;
+}
+.dir-list { flex: 1 1 auto; min-width: 0; margin: 0; padding: 0; list-style: none; }
+.dir-list > li + li { border-top: 1px solid var(--sep); }
+.dir-row {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; min-height: 56px; padding: 12px 12px 12px 14px;
+  border: 0; background: none; text-align: left; cursor: pointer; color: inherit;
+}
+.dir-row:active { background: var(--press); }
+.dir-row .r-title .tag { margin-left: 6px; }
+.dir-room { flex: 0 0 auto; font-size: 16px; font-weight: 700; color: var(--sub); }
 
 /* 時間×教室の表。狭い画面では表だけ左右にずらせる（時刻の列は止まったまま） */
 .tt-hint { margin: -2px 4px 8px; font-size: 13px; color: var(--sub); }
@@ -305,7 +326,8 @@ dialog::backdrop { background: rgba(0, 0, 0, .4); }
 @media (hover: hover) {
   a:hover { text-decoration: underline; }
   .row:hover { background: var(--fill-2); }
-  .row:hover .r-title { color: var(--accent); }
+  .row:hover .r-title, .dir-row:hover .r-title { color: var(--accent); }
+  .dir-row:hover { background: var(--fill-2); }
   .seg > a:hover { text-decoration: none; }
   .blk:hover .n { color: var(--accent); }
   .floor-nav a:hover { text-decoration: none; background: var(--press); }
