@@ -92,7 +92,10 @@ function openDetail(id) {
   $("dlg-body").innerHTML = detailHTML(e);
   const d = $("detail");
   if (!d.open) d.showModal();
+  // 開いたら一番上から。フォーカスは中身へ（スクロールさせない。閉じるボタンに枠を出さない）
+  $("dlg-body").focus({ preventScroll: true });
   d.scrollTop = 0;
+  requestAnimationFrame(() => { d.scrollTop = 0; });
 }
 
 /* ---------- タイムテーブル ---------- */
@@ -317,10 +320,14 @@ function renderDays(el, opts, cur, onPick) {
   el.onclick = (ev) => { const b = ev.target.closest("button"); if (b) onPick(b.dataset.k); };
 }
 
+let curTab = null;
 function route() {
   if ($("detail").open) $("detail").close();
   const h = location.hash;
   const tab = h === "#pamph" || h.startsWith("#e-") ? "pamph" : "time";
+  // タブを切り替えたら一番上から（前のタブの途中の位置のまま開かない）
+  if (curTab && curTab !== tab) window.scrollTo({ top: 0, behavior: "instant" });
+  curTab = tab;
   $("view-time").hidden = tab !== "time";
   $("view-pamph").hidden = tab !== "pamph";
   if (tab === "time") updateHint();
