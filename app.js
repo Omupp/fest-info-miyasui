@@ -235,7 +235,8 @@ function renderGrid(items, from, to) {
       } else {
         inner = `<span class="t tnum">${short ? fmt(it.start) : `${fmt(it.start)}〜${fmt(it.end)}`}</span><span class="n">${esc(label)}${short ? "" : mustTag(it.e)}</span>`
           + (!short && it.sub ? `<span class="s">${esc(it.sub)}</span>` : "")
-          + (!short && it.e.organizer ? `<span class="o">${esc(it.e.organizer.name.replace(/^iTLFest\.\s*/, ""))}</span>` : "");
+          // 団体名は正式な名前で。折り返すなら「iTLFest.」の後ろで
+          + (!short && it.e.organizer ? `<span class="o">${esc(it.e.organizer.name).replace(/^(iTLFest\.)\s*/, "$1<wbr>")}</span>` : "");
       }
       html += `<button type="button" class="blk ${short ? "short" : ""} ${lu ? "has-lu" : ""} ${st}" data-id="${esc(it.e.id)}" style="top:${(it.start - from) * pxPerMin}px;height:${h}px;${lane}">${inner}</button>`;
     }
