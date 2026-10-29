@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>iTLFest.2026 タイムテーブルとパンフ（非公式）</title>
+<meta name="description" content="iTLFest.2026（中央大学 市ヶ谷田町キャンパス・10/31〜11/1）の企画を、タイムテーブルとパンフの形にまとめた非公式のページです。">
+<meta property="og:title" content="iTLFest.2026 タイムテーブルとパンフ（非公式）">
+<meta property="og:description" content="10/31（土）・11/1（日）の企画を時間と場所で見られます。">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141414" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="style.css?v=4">
+</head>
+<body>
+<header class="site">
+  <div class="site-title">
+    <h1>iTLFest.2026</h1>
+    <span class="unofficial">非公式</span>
+  </div>
+  <p class="site-sub" id="site-sub"></p>
+</header>
+
+<nav class="tabs" aria-label="表示の切り替え">
+  <a href="#time" data-tab="time">タイムテーブル</a>
+  <a href="#pamph" data-tab="pamph">パンフ</a>
+</nav>
+
+<main>
+  <section id="view-time" hidden>
+    <div class="days" role="tablist" id="tt-days"></div>
+    <div class="tt-scroll"><div class="tt" id="tt"></div></div>
+    <h2 class="sec">終日</h2>
+    <table class="ledger" id="allday"></table>
+  </section>
+
+  <section id="view-pamph" hidden>
+    <table class="ledger info" id="info"></table>
+    <div class="filter">
+      <div class="days" role="tablist" id="pf-days"></div>
+      <input type="search" id="q" placeholder="さがす" autocomplete="off" enterkeyhint="search">
+    </div>
+    <div id="floors"></div>
+    <p class="empty" id="empty" hidden>見つかりません</p>
+    <h2 class="sec">団体</h2>
+    <div id="orgs"></div>
+  </section>
+</main>
+
+<footer class="site" id="foot"></footer>
+
+<dialog id="detail">
+  <div class="dlg-bar"><button type="button" id="dlg-close">閉じる</button></div>
+  <div id="dlg-body"></div>
+</dialog>
+
+<script src="app.js?v=4"></script>
+</body>
+</html>

@@ -1,0 +1,1196 @@
+{
+ "updated_at": "2026-10-29T19:07+09:00",
+ "source": "https://gakusai-search.github.io/",
+ "events": [
+  {
+   "id": "kilig-dance",
+   "title": "ダンス",
+   "organizer": {
+    "id": "kilig_itl_si2",
+    "name": "KiLIG"
+   },
+   "description": "今年のテーマはAmerican Dinerです🇺🇸かわいいやかっこいいが詰まったキラキラしたダイナーの世界をお楽しみください✨",
+   "tags": [
+    "11月1日 (日)",
+    "ステージ・公演",
+    "ダンス",
+    "完全無料"
+   ],
+   "conditions": [
+    "完全無料"
+   ],
+   "date_text": "11月1日（日）11:00〜12:00",
+   "sessions": [
+    {
+     "day": "11-01",
+     "start": "11:00",
+     "end": "12:00"
+    }
+   ],
+   "campus": "中央大学 市ヶ谷田町キャンパス",
+   "floor": 1,
+   "room": "9面マルチ前",
+   "image": null,
+   "image_local": null,
+   "accounts": [],
+   "url": "https://gakusai-search.github.io/2026/events/kilig-dance/"
+  },
+  {
+   "id": "itl-foodstall",
+   "title": "食品販売",
+   "organizer": {
+    "id": "festival_itl",
+    "name": "iTLFest.実行委員会"
+   },
+   "description": "「エキゾチック」をテーマにメニューを刷新！タコスやチャイ、タピオカなど異国感あふれるフード＆ドリンクが勢揃い。1F奥へぜひお越しください！",
+   "tags": [
+    "10月31日 (土)",
+    "11月1日 (日)",
+    "飲食",
+    "自然・環境・生物",
+    "予約不要",
+    "常時開催",
+    "完全無料",
+    "キャッシュレス可",
+    "イートインあり"
+   ],
+   "conditions": [
+    "予約不要",
+    "常時開催",
+    "完全無料",
+    "キャッシュレス可",
+    "イートインあり"
+   ],
+   "date_text": "10月31日（土）終日 および 11月1日（日）終日",
+   "sessions": [
+    {
+     "day": "10-31",
+     "allday": true
+    },
+    {
+     "day": "11-01",
+     "allday": true
+    }
+   ],
+   "campus": "中央大学 市ヶ谷田町キャンパス",
+   "floor": 1,
+   "room": "コミュニケーションホール",
+   "image": null,
+   "image_local": null,
+   "accounts": [],
+   "url": "https://gakusai-search.github.io/2026/events/itl-foodstall/"
+  },
+  {
+   "id": "itl-music",
+   "title": "iTL MUSiC FESTiVAL 2026",
+   "organizer": {
+    "id": "itl_keion",
+    "name": "iTL軽音楽サークル"
+   },
+   "description": "個性豊かなバンドが集結！iTL軽音楽サークルが、学園祭を音楽で盛り上げます！迫力満点の生演奏をぜひ会場でお楽しみください！",
+   "tags": [
+    "10月31日 (土)",
+    "ステージ・公演",
+    "バンド・軽音楽",
+    "予約不要",
+    "途中入退場OK",
+    "撮影OK",
+    "完全無料"
+   ],
+   "conditions": [
+    "予約不要",
+    "途中入退場OK",
+    "撮影OK",
+    "完全無料"
+   ],
+   "date_text": "10月31日（土）終日",
+   "sessions": [
+    {
+     "day": "10-31",
+     "allday": true
+    }
+   ],
+   "campus": "中央大学 市ヶ谷田町キャンパス",
+   "floor": 1,
+   "room": "ステージ",
+   "image": "https://gakusai-search.github.io/img/events/itl-musicfest2026.png",
+   "image_local": "img/posters/itl-musicfest2026.jpg",
+   "accounts": [],
+   "url": "https://gakusai-search.github.io/2026/events/itl-music/"
+  },
+  {
+   "id": "itlpiano",
+   "title": "クラシック音楽演奏企画",
+   "organizer": {
+    "id": "itlpiano",
+    "name": "iTLピアノサークル"
+   },
+   "description": "iTLピアノサークルでは、2024年度と2025年度に引き続きクラシック音楽演奏を行います🎶一緒に優雅な午後のひとときを過ごしませんか？",
+   "tags": [
+    "11月1日 (日)",
+    "ステージ・公演",
+    "クラシック・吹奏楽",
+    "その他の音楽",
+    "予約不要",
+    "途中入退場OK",
+    "撮影OK",
+    "完全無料"
+   ],
+   "conditions": [
+    "予約不要",
+    "途中入退場OK",
+    "撮影OK",
+    "完全無料"
+   ],
+   "date_text": "11月1日（日）13:00～14:00",
+   "sessions": [
+    {
+     "day": "11-01",
+     "start": "13:00",
+     "end": "14:00"
+    }
+   ],
+   "campus": "中央大学 市ヶ谷田町キャンパス",
+   "floor": 1,
+   "room": "ステージ",
+   "image": "https://gakusai-search.github.io/img/events/itl-classic-music2026.png",
+   "image_local": "img/posters/itl-classic-music2026.jpg",
+   "accounts": [],
+   "url": "https://gakusai-search.github.io/2026/events/itlpiano/"
+  },
+  {
+   "id": "itl-owarai",
+   "title": "iTLFest. お笑いライブ2026",
+   "organizer": {
+    "id": "festival_itl",
+    "name": "iTLFest.実行委員会"
+   },
+   "description": "吉本所属の芸能人「銀シャリ」「ネルソンズ」「マルセイユ」がiTLに登場！「爆笑の風、吹き荒れる」感動と爆笑の特別お笑いステージをお見逃しなく！",
+   "tags": [
+    "10月31日 (土)",
+    "ステージ・公演",
+    "お笑い",
+    "予約必須",
+    "完全無料",
+    "キッズ歓迎"
+   ],
+   "conditions": [
+    "予約必須",
+    "完全無料",
+    "キッズ歓迎"
+   ],
+   "date_text": "10月31日（土）11:00～12:00",
+   "sessions": [
+    {
+     "day": "10-31",
+     "start": "11:00",
+     "end": "12:00"
+    }
+   ],
+   "campus": "中央大学 市ヶ谷田町キャンパス",
+   "floor": 3,
+   "room": "301教室",
+   "image": null,
+   "image_local": null,
+   "accounts": [],
+   "url": "https://gakusai-search.github.io/2026/events/itl-owarai/"
+  },
+  {
+   "id": "itl-rakugo",
+   "title": "三遊亭好青年 落語&トークショー",
+   "organizer": {
+    "id": "festival_itl",
+    "name": "iTLFest.実行委員会"
+   },
+   "description": "中央大学卒の林家三平さんが推す外国人落語家、三遊亭好青年さんがiTLに登壇！異色の経歴を持つ落語家によるトークを、ぜひ無料でお楽しみください！",
+   "tags": [
+    "11月1日 (日)",
+    "ステージ・公演",
+    "伝統芸能",
+    "お笑い",
+    "歴史・社会・文化",
+    "予約必須",
+    "完全無料",
+    "キッズ歓迎"
+   ],
+   "conditions": [
+    "予約必須",
+    "完全無料",
+    "キッズ歓迎"
+   ],
+   "date_text": "11月1日（日）14:00～15:00",
+   "sessions": [
+    {
+     "day": "11-01",
+     "start": "14:00",
+     "end": "15:00"
+    }
+   ],
+   "campus": "中央大学 市ヶ谷田町キャンパス",
+   "floor": 3,
+   "room": "301教室",
+   "image": null,
+   "image_local": null,
+   "accounts": [],
+   "url": "https://gakusai-search.github.io/2026/events/itl-rakugo/"
+  },
+  {
+   "id": "itl-class-okajima",
+   "title": "講師企画（岡嶋裕史 教授）",
+   "organizer": {
+    "id": "festival_itl",
+    "name": "iTLFest.実行委員会"
+   },
+   "description": "実績多数・ゼミ1番人気の岡嶋裕史教授が登壇！「恋のブロックチェーンに見る社会構造の変遷とフィルターバブル」を分かりやすく紐解きます！",
+   "tags": [
+    "11月1日 (日)",
+    "講演",
+    "学生生活・進路",
+    "予約必須",
+    "途中入退場OK",
+    "完全無料",
+    "高校生・受験生応援"
+   ],
+   "conditions": [
+    "予約必須",
+    "途中入退場OK",
+    "完全無料",
+    "高校生・受験生応援"
+   ],
+   "date_text": "11月1日（日）11:00～12:00",
+   "sessions": [
+    {
+     "day": "11-01",
+     "start": "11:00",
+     "end": "12:00"
+    }
+   ],
+   "campus": "中央大学 市ヶ谷田町キャンパス",
+   "floor": 3,
+   "room": "301教室",
+   "image": null,
+   "image_local": null,
+   "accounts": [],
+   "url": "https://gakusai-search.github.io/2026/events/itl-class-okajima/"
+  },
+  {
+   "id": "itl-class-hirano",
+   "title": "講師企画（平野晋 教授）",
+   "organizer": {
+    "id": "festival_itl",
+    "name": "iTLFest.実行委員会"
+   },
+   "description": "初代学部長の平野晋教授が「人間中心のAI」をテーマに登壇！AI・ロボット法や先端技術のリスク、ロボット社会の未来像まで分かりやすく解説します！",
+   "tags": [
+    "10月31日 (土)",
+    "学術・研究発表",
+    "講演",
+    "学生生活・進路",
+    "予約必須",
+    "途中入退場OK",
+    "完全無料",
+    "キッズ歓迎",
+    "高校生・受験生応援"
+   ],
+   "conditions": [
+    "予約必須",
+    "途中入退場OK",
+    "完全無料",
+    "キッズ歓迎",
+    "高校生・受験生応援"
+   ],
+   "date_text": "10月31日（土） 14:00〜15:00",
+   "sessions": [
+    {
+     "day": "10-31",
+     "start": "14:00",
+     "end": "15:00"
+    }
+   ],
+   "campus": "中央大学 市ヶ谷田町キャンパス",
+   "floor": 3,
+   "room": "301教室",
+   "image": null,
+   "image_local": null,
+   "accounts": [],
+   "url": "https://gakusai-search.github.io/2026/events/itl-class-hirano/"
+  },
+  {
+   "id": "itl-class-murata",
+   "title": "講師企画（村田雅之 教授）",
+   "organizer": {
+    "id": "festival_itl",
+    "name": "iTLFest.実行委員会"
+   },
+   "description": "特に1-2年生に大人気の村田雅之教授が登壇！「日常の再発見ー社会心理学の視点からー」をテーマに、ナッジ理論やメディア論を分かりやすく解説します！",
+   "tags": [
+    "11月1日 (日)",
+    "講演",
+    "学生生活・進路",
+    "予約必須",
+    "途中入退場OK",
+    "完全無料",
+    "高校生・受験生応援"
+   ],
+   "conditions": [
+    "予約必須",
+    "途中入退場OK",
+    "完全無料",
+    "高校生・受験生応援"
+   ],
+   "date_text": "11月1日（日）16:00～17:00",
+   "sessions": [
+    {
+     "day": "11-01",
+     "start": "16:00",
+     "end": "17:00"
+    }
+   ],
+   "campus": "中央大学 市ヶ谷田町キャンパス",
+   "floor": 3,
+   "room": "301教室",
+   "image": null,
+   "image_local": null,
+   "accounts": [],
+   "url": "https://gakusai-search.github.io/2026/events/itl-class-murata/"
+  },
+  {
+   "id": "itl-class-yajima",
+   "title": "講師企画（矢島壮平 准教授）",
+   "organizer": {
+    "id": "festival_itl",
+    "name": "iTLFest.実行委員会"
+   },
+   "description": "実行委員会を支える矢島壮平准教授が登壇！「動物アバターと学ぶ哲学・論理・倫理」をテーマに、狼のロンくんと楽しく知的好奇心を刺激します！",
+   "tags": [
+    "10月31日 (土)",
+    "講演",
+    "学生生活・進路",
+    "予約必須",
+    "途中入退場OK",
+    "完全無料",
+    "高校生・受験生応援"
+   ],
+   "conditions": [
+    "予約必須",
+    "途中入退場OK",
+    "完全無料",
+    "高校生・受験生応援"
+   ],
+   "date_text": "10月31日（土） 16:00〜17:00",
+   "sessions": [
+    {
+     "day": "10-31",
+     "start": "16:00",
+     "end": "17:00"
+    }
+   ],
+   "campus": "中央大学 市ヶ谷田町キャンパス",
+   "floor": 3,
+   "room": "301教室",
+   "image": null,
+   "image_local": null,
+   "accounts": [],
+   "url": "https://gakusai-search.github.io/2026/events/itl-class-yajima/"
+  },
+  {
+   "id": "itl-gamecafe",
+   "title": "ボードゲームカフェ",
+   "organizer": {
+    "id": "festival_itl",
+    "name": "iTLFest.実行委員会"
+   },
+   "description": "401教室でボードゲームを楽しもう！ジュースを飲みながら学生と対話ができ、学部の温かい雰囲気を体感できる参加型企画です！",
+   "tags": [
+    "10月31日 (土)",
+    "11月1日 (日)",
+    "飲食",
+    "アナログゲーム",
+    "予約不要",
+    "常時開催",
+    "途中入退場OK",
+    "キャッシュレス可",
+    "イートインあり",
+    "キッズ歓迎"
+   ],
+   "conditions": [
+    "予約不要",
+    "常時開催",
+    "途中入退場OK",
+    "キャッシュレス可",
+    "イートインあり",
+    "キッズ歓迎"
+   ],
+   "date_text": "10月31日（土）終日 および 11月1日（日）終日",
+   "sessions": [
+    {
+     "day": "10-31",
+     "allday": true
+    },
+    {
+     "day": "11-01",
+     "allday": true
+    }
+   ],
+   "campus": "中央大学 市ヶ谷田町キャンパス",
+   "floor": 4,
+   "room": "401教室",
+   "image": null,
+   "image_local": null,
+   "accounts": [],
+   "url": "https://gakusai-search.github.io/2026/events/itl-gamecafe/"
+  },
+  {
+   "id": "itl-ennichi",
+   "title": "縁日企画",
+   "organizer": {
+    "id": "festival_itl",
+    "name": "iTLFest.実行委員会"
+   },
+   "description": "401教室でエキゾチックな縁日を両日開催！キーホルダー作り、型抜き、ストラックアウト、ボウリング、ダーツが楽しめます！遊んで、作って、盛り上がろう！",
+   "tags": [
+    "10月31日 (土)",
+    "11月1日 (日)",
+    "アトラクション",
+    "スポーツ・健康",
+    "手芸・工芸",
+    "常時開催",
+    "途中入退場OK",
+    "撮影OK",
+    "完全無料",
+    "キッズ歓迎"
+   ],
+   "conditions": [
+    "常時開催",
+    "途中入退場OK",
+    "撮影OK",
+    "完全無料",
+    "キッズ歓迎"
+   ],
+   "date_text": "10月31日（土）終日 および 11月1日（日）終日",
+   "sessions": [
+    {
+     "day": "10-31",
+     "allday": true
+    },
+    {
+     "day": "11-01",
+     "allday": true
+    }
+   ],
+   "campus": "中央大学 市ヶ谷田町キャンパス",
+   "floor": 4,
+   "room": "401教室",
+   "image": "https://gakusai-search.github.io/img/events/itl-ennichi2026.png",
+   "image_local": "img/posters/itl-ennichi2026.jpg",
+   "accounts": [],
+   "url": "https://gakusai-search.github.io/2026/events/itl-ennichi/"
+  },
+  {
+   "id": "itl-obake",
+   "title": "お化け屋敷企画",
+   "organizer": {
+    "id": "festival_itl",
+    "name": "iTLFest.実行委員会"
+   },
+   "description": "「エキゾチック」をテーマに、未知のウイルスが蔓延した廃病院を再現！ゾンビが潜む恐怖の感染病棟で、スリルあふれる本格お化け屋敷を体験しよう！",
+   "tags": [
+    "10月31日 (土)",
+    "11月1日 (日)",
+    "アトラクション",
+    "アナログゲーム",
+    "予約不要",
+    "常時開催",
+    "完全無料",
+    "キッズ歓迎"
+   ],
+   "conditions": [
+    "予約不要",
+    "常時開催",
+    "完全無料",
+    "キッズ歓迎"
+   ],
+   "date_text": "10月31日（土）終日 および 11月1日（日）終日",
+   "sessions": [
+    {
+     "day": "10-31",
+     "allday": true
+    },
+    {
+     "day": "11-01",
+     "allday": true
+    }
+   ],
+   "campus": "中央大学 市ヶ谷田町キャンパス",
+   "floor": 5,
+   "room": "501教室",
+   "image": "https://gakusai-search.github.io/img/events/itl-obake2026.png",
+   "image_local": "img/posters/itl-obake2026.jpg",
+   "accounts": [],
+   "url": "https://gakusai-search.github.io/2026/events/itl-obake/"
+  },
+  {
+   "id": "cue-diorama",
+   "title": "diorama",
+   "organizer": {
+    "id": "gimmeacue",
+    "name": "cue 宮"
+   },
+   "description": "DJとホログラム技術を掛け合わせ、音楽とテクノロジーを合わせるという試みは、いかにもiTL的。音を視覚的に楽しむこの体験に足を運んでみてください。",
+   "tags": [
+    "10月31日 (土)",
+    "ステージ・公演",
+    "その他の音楽",
+    "美術・デザイン",
+    "情報・プログラミング",
+    "予約不要",
+    "途中入退場OK",
+    "撮影OK",
+    "完全無料"
+   ],
+   "conditions": [
+    "予約不要",
+    "途中入退場OK",
+    "撮影OK",
+    "完全無料"
+   ],
+   "date_text": "10月31日（土）12:00～17:00",
+   "sessions": [
+    {
+     "day": "10-31",
+     "start": "12:00",
+     "end": "17:00"
+    }
+   ],
+   "campus": "中央大学 市ヶ谷田町キャンパス",
+   "floor": 7,
+   "room": "701教室",
+   "image": "https://gakusai-search.github.io/img/events/cue-diorama2026.png",
+   "image_local": "img/posters/cue-diorama2026.jpg",
+   "accounts": [],
+   "url": "https://gakusai-search.github.io/2026/events/cue-diorama/"
+  },
+  {
+   "id": "itlfest-quiz",
+   "title": "iTLFest.クイズ大会",
+   "organizer": {
+    "id": "festival_itl",
+    "name": "iTLFest.実行委員会"
+   },
+   "description": "iTLFest.に初めてやってくるチュー王子に加え、今年新たに誕生した公式キャラ「リンク・リーガ」も登場！クイズ大会で豪華景品を目指して挑戦しよう！",
+   "tags": [
+    "11月1日 (日)",
+    "大会・コンテスト",
+    "アナログゲーム",
+    "予約不要",
+    "撮影OK",
+    "完全無料",
+    "キッズ歓迎",
+    "高校生・受験生応援"
+   ],
+   "conditions": [
+    "予約不要",
+    "撮影OK",
+    "完全無料",
+    "キッズ歓迎",
+    "高校生・受験生応援"
+   ],
+   "date_text": "11月1日（日） 12:20〜12:40, 13:20〜13:40",
+   "sessions": [
+    {
+     "day": "11-01",
+     "start": "12:20",
+     "end": "12:40"
+    },
+    {
+     "day": "11-01",
+     "start": "13:20",
+     "end": "13:40"
+    }
+   ],
+   "campus": "中央大学 市ヶ谷田町キャンパス",
+   "floor": 7,
+   "room": "701教室",
+   "image": null,
+   "image_local": null,
+   "accounts": [],
+   "url": "https://gakusai-search.github.io/2026/events/itlfest-quiz/"
+  },
+  {
+   "id": "c3-playlab",
+   "title": "C3 PlayLab",
+   "organizer": {
+    "id": "c3ofcl",
+    "name": "C3 | Creative Computing Club"
+   },
+   "description": "創作×コンピュータで遊ぼう！SwitchのJoy-Conで遊ぶ自作ゲーム、動画・音楽制作体験、かわいいAIキャラとおしゃべり、AIで葉書制作、メディアアート、自作アプリを展示。",
+   "tags": [
+    "10月31日 (土)",
+    "11月1日 (日)",
+    "体験・ワークショップ",
+    "展示",
+    "情報・プログラミング",
+    "デジタルゲーム",
+    "その他の音楽",
+    "美術・デザイン",
+    "写真・映像",
+    "予約不要",
+    "常時開催",
+    "途中入退場OK",
+    "撮影OK",
+    "完全無料"
+   ],
+   "conditions": [
+    "予約不要",
+    "常時開催",
+    "途中入退場OK",
+    "撮影OK",
+    "完全無料"
+   ],
+   "date_text": "10月31日（土）終日 および 11月1日（日）終日",
+   "sessions": [
+    {
+     "day": "10-31",
+     "allday": true
+    },
+    {
+     "day": "11-01",
+     "allday": true
+    }
+   ],
+   "campus": "中央大学 市ヶ谷田町キャンパス",
+   "floor": 7,
+   "room": "702教室",
+   "image": "https://gakusai-search.github.io/img/events/c3playlab2026.png",
+   "image_local": "img/posters/c3playlab2026.jpg",
+   "accounts": [],
+   "url": "https://gakusai-search.github.io/2026/events/c3-playlab/"
+  },
+  {
+   "id": "itl-photoclub",
+   "title": "iTL写真展2026",
+   "organizer": {
+    "id": "itl_photoclub",
+    "name": "iTL写真部"
+   },
+   "description": "部員がそれぞれの視点で切り取った作品を展示します。写真だからこそ残せる瞬間や表現の魅力を、ぜひ会場でお楽しみください。",
+   "tags": [
+    "10月31日 (土)",
+    "11月1日 (日)",
+    "展示",
+    "写真・映像",
+    "美術・デザイン",
+    "予約不要",
+    "常時開催",
+    "撮影OK",
+    "完全無料"
+   ],
+   "conditions": [
+    "予約不要",
+    "常時開催",
+    "撮影OK",
+    "完全無料"
+   ],
+   "date_text": "10月31日（土）終日 および 11月1日（日）終日",
+   "sessions": [
+    {
+     "day": "10-31",
+     "allday": true
+    },
+    {
+     "day": "11-01",
+     "allday": true
+    }
+   ],
+   "campus": "中央大学 市ヶ谷田町キャンパス",
+   "floor": 8,
+   "room": "801教室",
+   "image": null,
+   "image_local": null,
+   "accounts": [],
+   "url": "https://gakusai-search.github.io/2026/events/itl-photoclub/"
+  },
+  {
+   "id": "ithiel-sokushin",
+   "title": "イティエル促進企画",
+   "organizer": {
+    "id": "ithiel_sokushin",
+    "name": "イティエル促進委員会"
+   },
+   "description": "PCゲーム・イラスト・チャットボットなど、さまざまな形でイティエルの魅力を楽しめる展示とグッズ販売を行います。",
+   "tags": [
+    "10月31日 (土)",
+    "11月1日 (日)",
+    "展示",
+    "物販",
+    "アニメ・マンガ・コスプレ",
+    "美術・デザイン",
+    "情報・プログラミング",
+    "予約不要",
+    "常時開催"
+   ],
+   "conditions": [
+    "予約不要",
+    "常時開催"
+   ],
+   "date_text": "10月31日（土）終日 および 11月1日（日）終日",
+   "sessions": [
+    {
+     "day": "10-31",
+     "allday": true
+    },
+    {
+     "day": "11-01",
+     "allday": true
+    }
+   ],
+   "campus": "中央大学 市ヶ谷田町キャンパス",
+   "floor": 8,
+   "room": "802教室",
+   "image": "https://gakusai-search.github.io/img/events/ithiel2026.png",
+   "image_local": "img/posters/ithiel2026.jpg",
+   "accounts": [],
+   "url": "https://gakusai-search.github.io/2026/events/ithiel-sokushin/"
+  },
+  {
+   "id": "itl-casino",
+   "title": "カジノ企画",
+   "organizer": {
+    "id": "festival_itl",
+    "name": "iTLFest.実行委員会"
+   },
+   "description": "「エキゾチック」な雰囲気を満喫できる本格カジノ＆ナイトクラブ空間が登場！体験型ゲームやDJパフォーマンスを盛りだくさんでお届けします！",
+   "tags": [
+    "10月31日 (土)",
+    "11月1日 (日)",
+    "アトラクション",
+    "アナログゲーム",
+    "予約不要",
+    "常時開催",
+    "途中入退場OK",
+    "完全無料"
+   ],
+   "conditions": [
+    "予約不要",
+    "常時開催",
+    "途中入退場OK",
+    "完全無料"
+   ],
+   "date_text": "10月31日（土）終日 および 11月1日（日）終日",
+   "sessions": [
+    {
+     "day": "10-31",
+     "allday": true
+    },
+    {
+     "day": "11-01",
+     "allday": true
+    }
+   ],
+   "campus": "中央大学 市ヶ谷田町キャンパス",
+   "floor": 9,
+   "room": "901教室",
+   "image": "https://gakusai-search.github.io/img/events/itl-casino-club2026.png",
+   "image_local": "img/posters/itl-casino-club2026.jpg",
+   "accounts": [],
+   "url": "https://gakusai-search.github.io/2026/events/itl-casino/"
+  },
+  {
+   "id": "itl-pokemon",
+   "title": "iTLポケモン部〜全人類ポケモントレーナー計画〜",
+   "organizer": {
+    "id": "itl_pokemonclub",
+    "name": "iTLポケモン部"
+   },
+   "description": "ポケモン好き集合！優勝賞品をかけたチャンピオンズ大会を開催！対戦やクイズ、展示など、子どもから大人まで楽しめる企画が盛りだくさん！",
+   "tags": [
+    "10月31日 (土)",
+    "11月1日 (日)",
+    "体験・ワークショップ",
+    "展示",
+    "大会・コンテスト",
+    "デジタルゲーム",
+    "アニメ・マンガ・コスプレ",
+    "アナログゲーム",
+    "予約不要",
+    "予約必須",
+    "常時開催",
+    "途中入退場OK",
+    "撮影OK",
+    "完全無料",
+    "キッズ歓迎"
+   ],
+   "conditions": [
+    "予約不要",
+    "予約必須",
+    "常時開催",
+    "途中入退場OK",
+    "撮影OK",
+    "完全無料",
+    "キッズ歓迎"
+   ],
+   "date_text": "10月31日（土）終日 および 11月1日（日）終日",
+   "sessions": [
+    {
+     "day": "10-31",
+     "allday": true
+    },
+    {
+     "day": "11-01",
+     "allday": true
+    }
+   ],
+   "campus": "中央大学 市ヶ谷田町キャンパス",
+   "floor": 9,
+   "room": "902教室",
+   "image": "https://gakusai-search.github.io/img/events/itl-pokemon2026.png",
+   "image_local": "img/posters/itl-pokemon2026.jpg",
+   "accounts": [],
+   "url": "https://gakusai-search.github.io/2026/events/itl-pokemon/"
+  },
+  {
+   "id": "itl-karaoke",
+   "title": "カラオケ企画",
+   "organizer": {
+    "id": "festival_itl",
+    "name": "iTLFest.実行委員会"
+   },
+   "description": "「エキゾチック」にちなんだ民謡イントロクイズやサビ歌詞当てなど、白熱の音楽クイズを開催！自由に参加できるカラオケタイムで音楽を通じて盛り上がろう！",
+   "tags": [
+    "10月31日 (土)",
+    "11月1日 (日)",
+    "アトラクション",
+    "その他の音楽",
+    "アナログゲーム",
+    "予約不要",
+    "常時開催",
+    "途中入退場OK",
+    "完全無料",
+    "キッズ歓迎"
+   ],
+   "conditions": [
+    "予約不要",
+    "常時開催",
+    "途中入退場OK",
+    "完全無料",
+    "キッズ歓迎"
+   ],
+   "date_text": "10月31日（土）終日 および 11月1日（日）終日",
+   "sessions": [
+    {
+     "day": "10-31",
+     "allday": true
+    },
+    {
+     "day": "11-01",
+     "allday": true
+    }
+   ],
+   "campus": "中央大学 市ヶ谷田町キャンパス",
+   "floor": 10,
+   "room": "1005教室",
+   "image": "https://gakusai-search.github.io/img/events/itl-karaoke2026.png",
+   "image_local": "img/posters/itl-karaoke2026.jpg",
+   "accounts": [],
+   "url": "https://gakusai-search.github.io/2026/events/itl-karaoke/"
+  },
+  {
+   "id": "gmc-playground",
+   "title": "Global Playground",
+   "organizer": {
+    "id": "itlglobal",
+    "name": "GMC"
+   },
+   "description": "遊びながら世界を知るという国際サークルならではの企画を行います！おなじみのものから知られていないものまで世界中のゲームをご用意しています。",
+   "tags": [
+    "10月31日 (土)",
+    "11月1日 (日)",
+    "体験・ワークショップ",
+    "アナログゲーム",
+    "歴史・社会・文化",
+    "国際・語学",
+    "予約不要",
+    "常時開催",
+    "途中入退場OK",
+    "完全無料"
+   ],
+   "conditions": [
+    "予約不要",
+    "常時開催",
+    "途中入退場OK",
+    "完全無料"
+   ],
+   "date_text": "10月31日（土）終日 および 11月1日（日）終日",
+   "sessions": [
+    {
+     "day": "10-31",
+     "allday": true
+    },
+    {
+     "day": "11-01",
+     "allday": true
+    }
+   ],
+   "campus": "中央大学 市ヶ谷田町キャンパス",
+   "floor": 10,
+   "room": "教室未定",
+   "image": null,
+   "image_local": null,
+   "accounts": [],
+   "url": "https://gakusai-search.github.io/2026/events/gmc-playground/"
+  },
+  {
+   "id": "gdgoc-programming-art",
+   "title": "体で創る！ プログラミングアート",
+   "organizer": {
+    "id": "gdgoc-chuo",
+    "name": "GDGoC Chuo"
+   },
+   "description": "剣を持て！ 飛んでくる具材を切ってサンドイッチを完成させよう。『体で創る！ プログラミングアート』では、サークルで制作したゲーム体験を行います！",
+   "tags": [
+    "10月31日 (土)",
+    "体験・ワークショップ",
+    "デジタルゲーム",
+    "情報・プログラミング",
+    "予約不要",
+    "常時開催",
+    "途中入退場OK",
+    "完全無料",
+    "キッズ歓迎"
+   ],
+   "conditions": [
+    "予約不要",
+    "常時開催",
+    "途中入退場OK",
+    "完全無料",
+    "キッズ歓迎"
+   ],
+   "date_text": "10月31日（土）終日",
+   "sessions": [
+    {
+     "day": "10-31",
+     "allday": true
+    }
+   ],
+   "campus": "中央大学 市ヶ谷田町キャンパス",
+   "floor": 10,
+   "room": "教室未定",
+   "image": "https://gakusai-search.github.io/img/events/gdgoc-chuo-itl2026.png",
+   "image_local": "img/posters/gdgoc-chuo-itl2026.jpg",
+   "accounts": [],
+   "url": "https://gakusai-search.github.io/2026/events/gdgoc-programming-art/"
+  }
+ ],
+ "organizers": [
+  {
+   "id": "c3ofcl",
+   "name": "C3 | Creative Computing Club",
+   "description": "中央大学 市ヶ谷田町キャンパス（iTL）を拠点に、コンピュータをツールとして活用した創作活動を行うサークルです。本Webサイトの開発を担当しました。",
+   "links": [
+    {
+     "service": "Web",
+     "url": "https://linktr.ee/c3ofcl",
+     "label": "https://linktr.ee/c3ofcl"
+    },
+    {
+     "service": "Instagram",
+     "url": "https://instagram.com/c3.ofcl",
+     "label": "@c3.ofcl"
+    },
+    {
+     "service": "Threads",
+     "url": "https://threads.net/c3.ofcl",
+     "label": "@c3.ofcl"
+    },
+    {
+     "service": "X",
+     "url": "https://x.com/c3ofcl",
+     "label": "https://x.com/c3ofcl"
+    },
+    {
+     "service": "TikTok",
+     "url": "https://tiktok.com/@c3ofcl",
+     "label": "@c3ofcl"
+    },
+    {
+     "service": "YouTube",
+     "url": "https://youtube.com/@c3ofcl",
+     "label": "@c3ofcl"
+    },
+    {
+     "service": "LINE",
+     "url": "https://line.me/R/ti/p/@112ebwax",
+     "label": "@112ebwax"
+    }
+   ],
+   "url": "https://gakusai-search.github.io/organizers/c3ofcl/"
+  },
+  {
+   "id": "gdgoc-chuo",
+   "name": "GDGoC Chuo",
+   "description": "サークル GDGoC Chuo は、プログラミングを中心にデジタル技術によるものづくりを行っています！ Google Developers のサポートを受けているサークルであり、国際情報学部を中心に全学部で活動しています！",
+   "links": [
+    {
+     "service": "Web",
+     "url": "https://gdgoc-chuo.com/",
+     "label": "https://gdgoc-chuo.com/"
+    },
+    {
+     "service": "X",
+     "url": "https://x.com/gdgs_chuo",
+     "label": "@gdgs_chuo"
+    },
+    {
+     "service": "Instagram",
+     "url": "https://instagram.com/gdgs_chuo",
+     "label": "@gdgs_chuo"
+    }
+   ],
+   "url": "https://gakusai-search.github.io/organizers/gdgoc-chuo/"
+  },
+  {
+   "id": "itlglobal",
+   "name": "GMC",
+   "description": "",
+   "links": [],
+   "url": "https://gakusai-search.github.io/organizers/itlglobal/"
+  },
+  {
+   "id": "kilig_itl_si2",
+   "name": "KiLIG",
+   "description": "国際情報学部を拠点としたダンスサークルですପଓ ·.¸¸.·´´¯`·._.·",
+   "links": [
+    {
+     "service": "Instagram",
+     "url": "https://instagram.com/kilig.itl_si2",
+     "label": "@kilig.itl_si2"
+    }
+   ],
+   "url": "https://gakusai-search.github.io/organizers/kilig_itl_si2/"
+  },
+  {
+   "id": "gimmeacue",
+   "name": "cue 宮",
+   "description": "DJサークルのcue 宮 (キュー)です。\n中央大学生を中心に活動しています。",
+   "links": [
+    {
+     "service": "Instagram",
+     "url": "https://instagram.com/gimmeacue",
+     "label": "@gimmeacue"
+    },
+    {
+     "service": "X",
+     "url": "https://x.com/gimmeacue",
+     "label": "@gimmeacue"
+    }
+   ],
+   "url": "https://gakusai-search.github.io/organizers/gimmeacue/"
+  },
+  {
+   "id": "festival_itl",
+   "name": "iTLFest.実行委員会",
+   "description": "中央大学国際情報学部「iTLFest.」の実行委員会です！",
+   "links": [
+    {
+     "service": "Web",
+     "url": "https://itlfest.com",
+     "label": "https://itlfest.com"
+    },
+    {
+     "service": "X",
+     "url": "https://x.com/Festival_iTL",
+     "label": "@Festival_iTL"
+    },
+    {
+     "service": "Instagram",
+     "url": "https://instagram.com/festival_itl",
+     "label": "@festival_itl"
+    },
+    {
+     "service": "Threads",
+     "url": "https://threads.net/festival_itl",
+     "label": "@festival_itl"
+    },
+    {
+     "service": "LINE",
+     "url": "https://line.me/R/ti/p/@513fripz",
+     "label": "@513fripz"
+    },
+    {
+     "service": "Mail",
+     "url": "mailto:itlfestdrive@gmail.com",
+     "label": "itlfestdrive@gmail.com"
+    }
+   ],
+   "url": "https://gakusai-search.github.io/organizers/festival_itl/"
+  },
+  {
+   "id": "itlpiano",
+   "name": "iTLピアノサークル",
+   "description": "ピアノを中心に、学祭や主催コンサートにてクラシック音楽の演奏を行っています🎶",
+   "links": [
+    {
+     "service": "Instagram",
+     "url": "https://instagram.com/itlpiano",
+     "label": "@itlpiano"
+    }
+   ],
+   "url": "https://gakusai-search.github.io/organizers/itlpiano/"
+  },
+  {
+   "id": "itl_pokemonclub",
+   "name": "iTLポケモン部",
+   "description": "",
+   "links": [],
+   "url": "https://gakusai-search.github.io/organizers/itl_pokemonclub/"
+  },
+  {
+   "id": "itl_photoclub",
+   "name": "iTL写真部",
+   "description": "iTL写真部は、市ヶ谷田町キャンパスを拠点に、写真を撮る・学ぶ・共有するサークルです。授業前後や空き時間にも参加しやすい環境を整え、撮影会や講評、展示を通して技術と感性を磨き、学年を越えた交流を行いながら、iTL内での写真文化の発展を目指して活動しています。",
+   "links": [
+    {
+     "service": "X",
+     "url": "https://x.com/iTL_photoclub",
+     "label": "@iTL_photoclub"
+    },
+    {
+     "service": "Instagram",
+     "url": "https://instagram.com/itl_photoclub",
+     "label": "@itl_photoclub"
+    },
+    {
+     "service": "Web",
+     "url": "https://itlphotoclub.com",
+     "label": "https://itlphotoclub.com"
+    }
+   ],
+   "url": "https://gakusai-search.github.io/organizers/itl_photoclub/"
+  },
+  {
+   "id": "itl_keion",
+   "name": "iTL軽音楽サークル",
+   "description": "",
+   "links": [],
+   "url": "https://gakusai-search.github.io/organizers/itl_keion/"
+  },
+  {
+   "id": "ithiel_sokushin",
+   "name": "イティエル促進委員会",
+   "description": "学部の非公式マスコットキャラクター「イティエル」の活用を通じて、学部内外での認知向上と定着を目指す団体です。学部の特色を象徴するキャラクターとして、SNSや企画、広報活動などを通じて魅力を発信し、学生や学外の人々との新たな接点づくりに取り組みます。",
+   "links": [
+    {
+     "service": "X",
+     "url": "https://x.com/iThieL_Diary",
+     "label": "@iThieL_Diary"
+    },
+    {
+     "service": "Web",
+     "url": "https://sites.google.com/view/ithiel-diary",
+     "label": "https://sites.google.com/view/ithiel-diary"
+    }
+   ],
+   "url": "https://gakusai-search.github.io/organizers/ithiel_sokushin/"
+  }
+ ]
+}

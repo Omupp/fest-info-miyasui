@@ -1,0 +1,60 @@
+{
+ "festival": {
+  "name": "iTLFest.2026",
+  "days": [
+   {"key": "10-31", "date": "2026-10-31", "label": "10/31（土）"},
+   {"key": "11-01", "date": "2026-11-01", "label": "11/1（日）"}
+  ],
+  "open": "10:00",
+  "close": "17:00",
+  "campus": "中央大学 市ヶ谷田町キャンパス",
+  "address": "東京都新宿区市谷田町1-18",
+  "theme": "エキゾチック",
+  "closed_floors": "2階と11階には入れません",
+  "links": [
+   {"label": "公式サイト", "url": "https://itlfest.com/"},
+   {"label": "Instagram", "url": "https://www.instagram.com/festival_itl"},
+   {"label": "X", "url": "https://x.com/Festival_iTL"},
+   {"label": "学祭ポータル", "url": "https://gakusai-search.github.io/"}
+  ]
+ },
+ "events": {
+  "itl-music": {
+   "sessions": [
+    {"day": "10-31", "start": "10:00", "end": "14:00"},
+    {"day": "10-31", "start": "15:00", "end": "17:00"}
+   ],
+   "replace_allday": true,
+   "notes": [{"from": "ポスター", "text": "10:00〜14:00、15:00〜17:00"}]
+  },
+  "itl-casino": {
+   "sessions": [
+    {"day": "10-31", "start": "11:00", "end": "13:00", "label": "ナイトクラブ"},
+    {"day": "11-01", "start": "11:00", "end": "13:00", "label": "ナイトクラブ"}
+   ],
+   "notes": [{"from": "ポスター", "text": "10:00〜17:00。ナイトクラブは 11:00〜13:00"}]
+  },
+  "itl-karaoke": {
+   "sessions": [
+    {"day": "10-31", "start": "13:00", "end": "16:00", "sub": "大会 13:00〜・15:00〜"},
+    {"day": "11-01", "start": "13:00", "end": "16:00", "sub": "大会 13:00〜・15:00〜"}
+   ],
+   "notes": [{"from": "ポスター", "text": "両日 13:00〜16:00。カラオケ大会は 13:00〜と 15:00〜、クイズは 1 時間半ごと。景品にお菓子あり"}]
+  },
+  "c3-playlab": {
+   "notes": [{"from": "ポスター", "text": "10:00〜17:00"}]
+  },
+  "itl-obake": {
+   "notes": [{"from": "ポスター", "text": "心臓の弱い方はご遠慮ください"}]
+  },
+  "ithiel-sokushin": {
+   "notes": [{"from": "ポスター", "text": "イラスト展示・チャットボット展示・ゲーム「teThieL -テティエル-」。グッズは 1階の生協「C's shop」で販売"}]
+  },
+  "gdgoc-programming-art": {
+   "notes": [{"from": "ポスター", "text": "体を動かして操作するリズムゲーム"}]
+  },
+  "itl-foodstall": {
+   "notes": [{"from": "公式サイト", "text": "タピオカミルクティーとブリトー（特にピザ風）が自信作"}]
+  }
+ }
+}
