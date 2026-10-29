@@ -282,6 +282,13 @@ function renderTime() {
   renderAllday(day);
 }
 
+// 両日やるのか、片方の日だけなのかの印
+function dayTag(e) {
+  const days = FEST.days.filter((d) => e.sessions.some((s) => s.day === d.key));
+  if (days.length === FEST.days.length) return `<span class="tag both">両日</span>`;
+  return days.map((d) => `<span class="tag only">${esc(d.label.replace(/（.*）/, ""))}のみ</span>`).join("");
+}
+
 // 終日の企画：ビルの案内板のように、左に大きく階、右にその階の企画と教室番号
 function renderAllday(day) {
   const full = `${FEST.open}〜${FEST.close}`;
@@ -300,7 +307,7 @@ function renderAllday(day) {
       const num = /^(\d+)教室$/.exec(e.room); // 「401教室」は右に番号だけ。それ以外の場所は名前の下に
       return `<li><button type="button" class="dir-row" data-id="${esc(e.id)}">
         <span class="r-main">
-          <span class="r-title">${esc(e.title)}${mustTag(e)}</span>
+          <span class="r-title">${esc(e.title)}${dayTag(e)}${mustTag(e)}</span>
           ${num ? "" : `<span class="r-meta">${esc(e.room)}</span>`}
           ${note ? `<span class="r-meta">${esc(note.trim())}</span>` : ""}
         </span>

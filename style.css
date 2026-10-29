@@ -12,6 +12,7 @@
   --chev: #b4b4b9;
   --sep: #dcdce1;
   --accent: #0066d6;
+  --accent-bg: #e3edfb;
   --must: #d70015;
   --must-bg: #fdecee;
   --live: #1a7f37;
@@ -38,6 +39,7 @@
     --chev: #5a5a5e;
     --sep: #38383a;
     --accent: #4da3ff;
+    --accent-bg: #172b45;
     --must: #ff6961;
     --must-bg: #3b1518;
     --live: #4cd471;
@@ -69,6 +71,8 @@ a, button, summary { -webkit-tap-highlight-color: transparent; }
 .tag { display: inline-block; font-size: 12px; font-weight: 700; line-height: 20px; padding: 0 7px; border-radius: 6px; white-space: nowrap; vertical-align: 1px; }
 .tag.must { color: var(--must); background: var(--must-bg); }
 .tag.live { color: var(--live); background: var(--live-bg); }
+.tag.both { color: var(--sub); background: var(--fill); }
+.tag.only { color: var(--accent); background: var(--accent-bg); }
 
 /* 見出し */
 header.site { padding: 32px 4px 10px; }
