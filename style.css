@@ -148,11 +148,20 @@ h2.sec small { font-size: 14px; font-weight: 600; color: var(--sub); margin-left
 .tt-col.wide { flex-basis: 156px; min-width: 156px; }
 .tt-col.axis { flex: 0 0 46px; min-width: 46px; border-left: 0; position: sticky; left: 0; z-index: 2; background: var(--card); }
 .tt-col.axis + .tt-col { border-left: 0; }
+/* 教室名の行：上の切り替えのすぐ下に止まる。横は表に合わせて JS で動かす */
+.tt-card { overflow: hidden; overflow: clip; }
+.tt-headrow {
+  position: sticky; top: var(--bar-h, 60px); z-index: 4;
+  display: flex; background: var(--card); border-bottom: 1px solid var(--sep);
+}
+.tt-axishead { flex: 0 0 46px; }
+.tt-headview { flex: 1 1 auto; min-width: 0; overflow: hidden; }
+.tt-headinner { display: flex; will-change: transform; }
 .tt-head {
-  height: 52px; padding: 4px 8px 6px; font-size: 13px; line-height: 1.3; color: var(--sub);
-  border-bottom: 1px solid var(--sep);
+  flex: 0 0 auto; box-sizing: border-box; min-height: 52px; padding: 6px 8px; font-size: 13px; line-height: 1.3; color: var(--sub);
   display: flex; flex-direction: column; justify-content: flex-end;
 }
+.tt-head + .tt-head { border-left: 1px solid var(--sep); }
 .tt-head b { font-size: 15px; color: var(--fg); }
 .tt-body { position: relative; margin-bottom: 10px; background-image: repeating-linear-gradient(to bottom, var(--sep) 0 1px, transparent 1px var(--hour)); }
 .axis .tt-body { background: none; }

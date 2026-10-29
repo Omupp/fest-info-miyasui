@@ -10,7 +10,7 @@
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
-<link rel="stylesheet" href="style.css?v=16">
+<link rel="stylesheet" href="style.css?v=17">
 </head>
 <body>
 <header class="site">
@@ -32,7 +32,10 @@
     <div id="nowbox"></div>
     <h2 class="sec">時間が決まっている企画</h2>
     <p class="tt-hint" id="tt-hint" hidden>左右にずらすと、ほかの教室も見られます</p>
-    <div class="tt-wrap card" id="tt-wrap"><div class="tt" id="tt"></div></div>
+    <div class="tt-card card">
+      <div class="tt-headrow" aria-hidden="true"><div class="tt-axishead"></div><div class="tt-headview"><div class="tt-headinner" id="tt-heads"></div></div></div>
+      <div class="tt-wrap" id="tt-wrap"><div class="tt" id="tt"></div></div>
+    </div>
     <h2 class="sec" id="allday-head">終日</h2>
     <ul class="rows" id="allday"></ul>
   </section>
@@ -60,6 +63,6 @@
   <div id="dlg-body" tabindex="-1"></div>
 </dialog>
 
-<script src="app.js?v=16"></script>
+<script src="app.js?v=17"></script>
 </body>
 </html>

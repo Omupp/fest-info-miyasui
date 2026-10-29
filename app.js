@@ -176,7 +176,8 @@ function renderGrid(items, from, to) {
     if (!cols.has(k)) cols.set(k, { floor: it.e.floor, room: it.e.room, items: [] });
     cols.get(k).items.push(it);
   }
-  let html = `<div class="tt-col axis"><div class="tt-head"></div><div class="tt-body" style="height:${height}px">`;
+  let html = `<div class="tt-col axis"><div class="tt-body" style="height:${height}px">`;
+  let heads = "";
   for (let m = from; m <= to; m += 60) html += `<span class="hour tnum" style="top:${(m - from) * pxPerMin}px">${m / 60}:00</span>`;
   html += `</div></div>`;
   for (const [, c] of [...cols.entries()].sort((a, b) => a[0].localeCompare(b[0], "ja"))) {
@@ -189,7 +190,9 @@ function renderGrid(items, from, to) {
       it.lane = l;
     }
     const n = Math.max(1, lanes.length);
-    html += `<div class="tt-col${c.items.some((it) => it.lineup.length) ? " wide" : ""}"><div class="tt-head">${c.floor ? `<span>${c.floor}階</span>` : ""}<b>${esc(c.room)}</b></div><div class="tt-body" style="height:${height}px">`;
+    const where = [c.floor ? `${c.floor}階` : "", c.room].filter(Boolean).join(" ");
+    heads += `<div class="tt-head">${c.floor ? `<span>${c.floor}階</span>` : ""}<b>${esc(c.room)}</b></div>`;
+    html += `<div class="tt-col${c.items.some((it) => it.lineup.length) ? " wide" : ""}" role="group" aria-label="${esc(where)}"><div class="tt-body" style="height:${height}px">`;
     for (const it of c.items) {
       const short = it.end - it.start < 45;
       const st = liveState(it, now, state.ttDay);
@@ -207,15 +210,23 @@ function renderGrid(items, from, to) {
     html += `</div></div>`;
   }
   $("tt").innerHTML = html;
+  $("tt-heads").innerHTML = heads;
   if (now.key === state.ttDay && now.min >= from && now.min <= to) {
     for (const body of $("tt").querySelectorAll(".tt-body")) body.insertAdjacentHTML("beforeend", `<div class="nowline" style="top:${(now.min - from) * pxPerMin}px"></div>`);
   }
 }
 
-// 表が画面からはみ出すときだけ「左右にずらせる」と出す
+// 表が画面からはみ出すときだけ「左右にずらせる」と出す。教室名の行の幅と横の位置を表にそろえる
 function updateHint() {
   const w = $("tt-wrap");
   $("tt-hint").hidden = w.scrollWidth <= w.clientWidth + 1;
+  document.documentElement.style.setProperty("--bar-h", `${document.querySelector(".bar").offsetHeight}px`);
+  const heads = $("tt-heads").children;
+  $("tt").querySelectorAll(".tt-col:not(.axis)").forEach((c, i) => { if (heads[i]) heads[i].style.width = `${c.getBoundingClientRect().width}px`; });
+  syncHeads();
+}
+function syncHeads() {
+  $("tt-heads").style.transform = `translateX(${-$("tt-wrap").scrollLeft}px)`;
 }
 
 function renderTime() {
@@ -381,6 +392,7 @@ async function main() {
 
   window.addEventListener("hashchange", route);
   window.addEventListener("resize", updateHint);
+  $("tt-wrap").addEventListener("scroll", syncHeads, { passive: true });
   $("q").addEventListener("input", (ev) => { state.q = ev.target.value; renderPamph(); });
   document.addEventListener("click", (ev) => {
     const fl = ev.target.closest("[data-floor]");
