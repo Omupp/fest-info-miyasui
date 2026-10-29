@@ -60,10 +60,27 @@ function detailHTML(e) {
     ${mustLabel(e) ? `<p class="must-line">${mustTag(e)}</p>` : ""}
     <dl><dt>日時</dt><dd>${esc(when(e))}</dd><dt>場所</dt><dd>${esc(place(e))}</dd></dl>
     ${e.description ? `<p class="desc">${esc(e.description)}</p>` : ""}
+    ${lineupHTML(e)}
     ${e.notes.length ? `<ul class="notes">${e.notes.map((n) => `<li><span class="from">${esc(n.from)}より</span>${esc(n.text)}</li>`).join("")}</ul>` : ""}
     ${cond ? `<p class="conds">${esc(cond)}</p>` : ""}
     <p class="src"><a href="${esc(safeUrl(e.url))}" target="_blank" rel="noopener">学祭ポータルで見る</a></p>
   </article>`;
+}
+
+// 出演順（軽音など）。演奏中・終わった組・休憩を示す
+function lineupHTML(e) {
+  if (!e.lineup.length) return "";
+  const now = jstNow();
+  return FEST.days.map((d) => {
+    const bs = e.lineup.filter((b) => b.day === d.key);
+    if (!bs.length) return "";
+    const lis = bs.map((b, i) => {
+      const st = now.key !== d.key ? "" : b.endMin <= now.min ? "done" : b.startMin <= now.min ? "on" : "";
+      const gap = bs[i + 1] && bs[i + 1].startMin > b.endMin ? `<li class="brk"><span class="tnum">${fmt(b.endMin)}</span><span>休憩</span></li>` : "";
+      return `<li class="${st}"><span class="tnum">${fmt(b.startMin)}</span><span>${esc(b.name)}${st === "on" ? `<span class="tag live">演奏中</span>` : ""}</span></li>${gap}`;
+    }).join("");
+    return `<h4 class="lu-head">出演 ${esc(d.label)}<small>${esc(e.lineupFrom || "")}より</small></h4><ol class="lineup">${lis}</ol>`;
+  }).join("");
 }
 
 function openDetail(id) {
@@ -89,6 +106,7 @@ function timedItems(day) {
         e, start, end: s.end ? toMin(s.end) : start + 60,
         name: s.label || e.title,
         sub: s.label ? e.title : s.sub || "",
+        lineup: e.lineup.filter((b) => b.day === day && b.startMin >= start && b.startMin < (s.end ? toMin(s.end) : start + 60)),
       });
     }
   }
@@ -106,13 +124,23 @@ function liveState(it, now, day) {
   return "";
 }
 
+// 一覧の 2 行目：出演順があれば「いま ○○・つぎ ○○」か「○組が出演」
+function subText(it, st) {
+  if (!it.lineup.length) return it.sub;
+  if (st !== "live") return `${it.lineup.length}組が出演`;
+  const m = jstNow().min;
+  const cur = it.lineup.find((b) => b.startMin <= m && m < b.endMin);
+  const next = it.lineup.find((b) => b.startMin > m);
+  return [cur && `いま ${cur.name}`, next && `つぎ ${fmt(next.startMin)} ${next.name}`].filter(Boolean).join("・");
+}
+
 function timedRow(it, st) {
   return `<li><button type="button" class="row ${st}" data-id="${esc(it.e.id)}">
     <span class="r-time tnum"><b>${fmt(it.start)}</b><small>〜${fmt(it.end)}</small></span>
     <span class="r-main">
       <span class="r-title">${esc(it.name)}</span>
       <span class="r-meta">${esc(place(it.e))}${st === "live" ? `<span class="tag live">開催中</span>` : ""}${mustTag(it.e)}</span>
-      ${it.sub ? `<span class="r-meta">${esc(it.sub)}</span>` : ""}
+      ${subText(it, st) ? `<span class="r-meta">${esc(subText(it, st))}</span>` : ""}
     </span>
   </button></li>`;
 }
@@ -160,9 +188,14 @@ function renderGrid(items, from, to) {
       const short = it.end - it.start < 45;
       const st = liveState(it, now, state.ttDay);
       const lane = n > 1 ? `left:calc(${(100 / n) * it.lane}% + 4px);right:auto;width:calc(${100 / n}% - 8px);` : "";
-      html += `<button type="button" class="blk ${short ? "short" : ""} ${st}" data-id="${esc(it.e.id)}" style="top:${(it.start - from) * pxPerMin}px;height:${Math.max(20, (it.end - it.start) * pxPerMin - 2)}px;${lane}">`
+      const lu = it.lineup.length && !short;
+      html += `<button type="button" class="blk ${short ? "short" : ""} ${lu ? "has-lu" : ""} ${st}" data-id="${esc(it.e.id)}" style="top:${(it.start - from) * pxPerMin}px;height:${Math.max(20, (it.end - it.start) * pxPerMin - 2)}px;${lane}">`
         + `<span class="t tnum">${short ? fmt(it.start) : `${fmt(it.start)}〜${fmt(it.end)}`}${short ? "" : mustTag(it.e)}</span><span class="n">${esc(it.name)}</span>`
         + (!short && it.sub ? `<span class="s">${esc(it.sub)}</span>` : "")
+        + (lu ? it.lineup.map((b) => {
+          const bs = now.key !== state.ttDay ? "" : b.endMin <= now.min ? "done" : b.startMin <= now.min ? "on" : "";
+          return `<span class="lu ${bs}"><span class="tnum">${fmt(b.startMin)}</span> ${esc(b.name)}</span>`;
+        }).join("") : "")
         + `</button>`;
     }
     html += `</div></div>`;
@@ -281,12 +314,22 @@ async function main() {
   EVENTS = fest.events.map((e) => {
     const x = extra.events[e.id] || {};
     const notes = x.notes || [];
+    const sess = x.sessions || [];
+    const lineup = (x.lineup || []).map((b, i, arr) => {
+      const start = toMin(b.start);
+      const s = sess.find((s) => s.day === b.day && toMin(s.start) <= start && start < toMin(s.end));
+      const limit = s ? toMin(s.end) : start + 20;
+      const nx = arr[i + 1];
+      return { ...b, startMin: start, endMin: nx && nx.day === b.day && toMin(nx.start) <= limit ? toMin(nx.start) : limit };
+    });
     return {
       ...e,
       notes,
-      extraSessions: x.sessions || [],
+      extraSessions: sess,
+      lineup,
+      lineupFrom: x.lineup_from,
       replaceAllday: !!x.replace_allday,
-      haystack: norm([e.title, e.organizer?.name, e.description, place(e), e.tags.join(" "), notes.map((n) => n.text).join(" ")].join(" ")),
+      haystack: norm([e.title, e.organizer?.name, e.description, place(e), e.tags.join(" "), notes.map((n) => n.text).join(" "), lineup.map((b) => b.name).join(" ")].join(" ")),
     };
   });
   BY_ID = new Map(EVENTS.map((e) => [e.id, e]));

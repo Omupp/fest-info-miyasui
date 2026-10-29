@@ -154,6 +154,10 @@ h2.sec small { font-size: 14px; font-weight: normal; color: var(--sub); margin-l
 .blk.short .n { font-size: 13px; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .blk.past { opacity: .45; }
 .blk.live { background: color-mix(in srgb, var(--live) 16%, var(--bg)); border-left-color: var(--live); }
+.blk.has-lu .n { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.blk .lu { display: block; font-size: 12px; line-height: 16px; color: var(--sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.blk .lu.on { color: var(--live); font-weight: 700; }
+.blk .lu.done { opacity: .5; }
 .nowline { position: absolute; left: 0; right: 0; border-top: 2px solid var(--live); z-index: 1; pointer-events: none; }
 
 /* パンフ */
@@ -204,6 +208,16 @@ dialog::backdrop { background: rgba(0, 0, 0, .45); }
 .ev dt { color: var(--sub); }
 .ev dd { margin: 0; font-weight: 700; }
 .ev .desc { margin: 12px 0 0; white-space: pre-line; }
+.ev .lu-head { margin: 16px 0 0; font-size: 16px; }
+.ev .lu-head small { font-size: 13px; font-weight: normal; color: var(--sub); margin-left: 8px; }
+.lineup { list-style: none; margin: 6px 0 0; padding: 0; border-top: 1px solid var(--rule-strong); }
+.lineup li { display: flex; gap: 12px; align-items: baseline; padding: 7px 0; border-bottom: 1px solid var(--rule); }
+.lineup li .tnum { flex: 0 0 44px; color: var(--sub); }
+.lineup li .tag { margin-left: 8px; }
+.lineup li.on { font-weight: 700; }
+.lineup li.on .tnum { color: var(--live); }
+.lineup li.done { opacity: .45; }
+.lineup li.brk { color: var(--sub); background: var(--soft); }
 .ev .notes { margin: 10px 0 0; padding: 10px 12px; list-style: none; background: var(--soft); font-size: 15px; }
 .ev .notes li + li { margin-top: 4px; }
 .ev .notes .from { color: var(--sub); font-size: 13px; margin-right: 6px; }
