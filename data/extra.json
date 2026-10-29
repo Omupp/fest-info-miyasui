@@ -44,6 +44,16 @@
     "url": "https://gakusai-search.github.io/"
    },
    {
+    "label": "中央大学「2026年度市ヶ谷田町大学祭開催要領」（PDF）",
+    "what": "日程・公開時間 10:00〜17:00",
+    "url": "https://www.chuo-u.ac.jp/uploads/2026/06/0853_2026%E5%B9%B4%E5%BA%A6%E5%B8%82%E3%83%B6%E8%B0%B7%E7%94%B0%E7%94%BA%E5%A4%A7%E5%AD%A6%E7%A5%AD%E9%96%8B%E5%82%AC%E8%A6%81%E9%A0%98.pdf"
+   },
+   {
+    "label": "学祭ポータル「教室案内」",
+    "what": "入れない階（2階・11階）",
+    "url": "https://gakusai-search.github.io/roomguide/"
+   },
+   {
     "label": "iTLFest. 公式サイト「開催概要」",
     "what": "日時・会場",
     "url": "https://itlfest.com/%e9%96%8b%e5%82%ac%e6%a6%82%e8%a6%81/"
@@ -57,6 +67,16 @@
     "label": "iTLFest. 公式サイト「食品販売について」",
     "what": "食品販売",
     "url": "https://itlfest.com/2026/10/25/%e9%a3%9f%e5%93%81%e8%b2%a9%e5%a3%b2%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6/"
+   },
+   {
+    "label": "iTLFest. 公式サイト「アクセス」",
+    "what": "行き方",
+    "url": "https://itlfest.com/%e3%82%a2%e3%82%af%e3%82%bb%e3%82%b9/"
+   },
+   {
+    "label": "iTLFest. 公式サイト「パンフレット」",
+    "what": "公式のパンフ（PDF は準備中）",
+    "url": "https://itlfest.com/%e3%83%91%e3%83%b3%e3%83%95%e3%83%ac%e3%83%83%e3%83%88/"
    },
    {
     "label": "iTLFest. 公式 Instagram",
@@ -73,7 +93,9 @@
     "what": "軽音の出演順",
     "url": ""
    }
-  ]
+  ],
+  "access_url": "https://itlfest.com/%e3%82%a2%e3%82%af%e3%82%bb%e3%82%b9/",
+  "reserve_note": "講師企画・お笑いライブ・落語と、ポケモン部の大会は予約が必要です。予約のしかたは公式の X・Instagram でご確認ください。"
  },
  "events": {
   "itl-music": {
@@ -232,7 +254,8 @@
      "from": "ポスター",
      "text": "両日 13:00〜16:00。カラオケ大会は 13:00〜と 15:00〜、クイズは 1 時間半ごと。景品にお菓子あり"
     }
-   ]
+   ],
+   "replace_allday": true
   },
   "c3-playlab": {
    "notes": [

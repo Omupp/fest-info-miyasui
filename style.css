@@ -19,7 +19,7 @@
   --block-edge: #0066d6;
   --r-card: 14px;
   --r-ctl: 10px;
-  --hour: 80px;
+  --hour: 96px;
   --tap: 44px;
   color-scheme: light dark;
 }
@@ -51,7 +51,7 @@ html { -webkit-text-size-adjust: 100%; background: var(--bg); }
 body {
   margin: 0 auto;
   max-width: 1040px;
-  padding: 0 16px env(safe-area-inset-bottom);
+  padding: 0 max(16px, env(safe-area-inset-right)) env(safe-area-inset-bottom) max(16px, env(safe-area-inset-left));
   background: var(--bg);
   color: var(--fg);
   font: 16px/1.55 -apple-system, system-ui, "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", sans-serif;
@@ -83,6 +83,7 @@ header.site h1 { margin: 0; font-size: 30px; line-height: 1.15; font-weight: 800
 .bar {
   position: sticky; top: 0; z-index: 5;
   margin: 0 -16px; padding: 8px 16px;
+  background: var(--bg);
   background: color-mix(in srgb, var(--bg) 82%, transparent);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   backdrop-filter: blur(20px) saturate(180%);
@@ -138,12 +139,15 @@ h2.sec small { font-size: 14px; font-weight: 600; color: var(--sub); margin-left
 .nowbox h2 .clock { font-size: 26px; color: var(--fg); }
 .nowbox h3 { margin: 6px 16px 0; padding-top: 10px; font-size: 14px; font-weight: 700; color: var(--sub); border-top: 1px solid var(--sep); }
 .nowbox .rows { border-radius: 0; }
+.nowbox.done { padding-bottom: 14px; }
+.nowbox.done h2 { color: var(--fg); font-size: 18px; }
+.nb-note { margin: 4px 16px 0; color: var(--sub); }
 
 /* 時間×教室の表。狭い画面では表だけ左右にずらせる（時刻の列は止まったまま） */
 .tt-hint { margin: -2px 4px 8px; font-size: 13px; color: var(--sub); }
 .tt-wrap { overflow-x: auto; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
 .tt { display: flex; min-width: fit-content; padding-right: 4px; }
-.tt-col { flex: 1 0 118px; min-width: 118px; }
+.tt-col { flex: 1 0 128px; min-width: 128px; }
 .tt-col + .tt-col { border-left: 1px solid var(--sep); }
 .tt-col.wide { flex-basis: 156px; min-width: 156px; }
 .tt-col.axis { flex: 0 0 46px; min-width: 46px; border-left: 0; position: sticky; left: 0; z-index: 2; background: var(--card); }
@@ -177,8 +181,8 @@ h2.sec small { font-size: 14px; font-weight: 600; color: var(--sub); margin-left
 .blk:active { filter: brightness(.96); }
 .blk .t { color: var(--sub); }
 .blk .t { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 6px; }
-.blk .t .tag { line-height: 18px; }
-.blk .n { font-weight: 700; font-size: 15px; }
+.blk .n .tag { margin-left: 4px; line-height: 18px; vertical-align: 1px; }
+.blk .n { font-weight: 700; font-size: 14px; }
 .blk .s { color: var(--sub); }
 .blk.short { flex-direction: row; align-items: center; gap: 6px; padding-top: 0; padding-bottom: 0; white-space: nowrap; }
 .blk.short .n { font-size: 13px; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
@@ -242,6 +246,8 @@ dialog {
   padding: 0; border: 0; border-radius: 16px;
   background: var(--card); color: var(--fg);
 }
+dialog { overscroll-behavior: contain; }
+html:has(dialog[open]) { overflow: hidden; }
 dialog::backdrop { background: rgba(0, 0, 0, .4); }
 @media (max-width: 759px) {
   dialog { margin: auto 0 0; width: 100%; max-width: 100%; max-height: 92dvh; border-radius: 16px 16px 0 0; padding-bottom: env(safe-area-inset-bottom); }
@@ -264,7 +270,9 @@ dialog::backdrop { background: rgba(0, 0, 0, .4); }
 .ev-img img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 12px; background: var(--fill); }
 .ev h3 { margin: 14px 0 0; font-size: 22px; line-height: 1.35; font-weight: 800; }
 .ev .org { color: var(--sub); margin: 2px 0 0; font-size: 14px; }
-.ev .must-line { margin: 10px 0 0; }
+.ev .must-line { margin: 10px 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+.ev .must-how { font-size: 14px; color: var(--sub); }
+.retry { display: block; margin-top: 12px; min-height: var(--tap); padding: 0 16px; border: 0; border-radius: 12px; background: var(--fill); color: var(--accent); font-weight: 700; cursor: pointer; }
 .ev dl { display: grid; grid-template-columns: auto 1fr; gap: 0; margin: 14px 0 0; background: var(--fill-2); border-radius: 12px; overflow: hidden; }
 .ev dt, .ev dd { padding: 10px 0; }
 .ev dt { color: var(--sub); padding-left: 14px; padding-right: 14px; }

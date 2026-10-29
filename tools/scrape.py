@@ -4,7 +4,9 @@
   python3 tools/scrape.py                 # サイトから取る
   python3 tools/scrape.py --cache DIR     # 保存済みの HTML から作る（DIR/2026_events_xxx.html など）
 
-中身（取得時刻を除く）が前と同じなら書き換えない。企画が 0 件・前の半分未満なら書かずに失敗する。
+中身（取得時刻を除く）が前と同じなら書き換えない。次のときは書かずに失敗する（Actions が失敗として知らせる）:
+  - 題名・日時・場所のどれかが読めない企画がある
+  - 企画が前より 3 件以上減った・団体が 0 件
 """
 import argparse
 import html
@@ -23,6 +25,7 @@ POSTERS = os.path.join(ROOT, "img", "posters")
 UA = "fest-info-miyasui (+https://github.com/Omupp/fest-info-miyasui)"
 JST = timezone(timedelta(hours=9))
 PLACEHOLDER = "events_hero_example"
+YEAR = "2026"  # この年の企画だけ（ほかの年・大学が足されても混ぜない）
 
 # 気になる条件（表示に使う）。それ以外のタグは日程・形式・分野
 CONDITIONS = ["予約不要", "予約必須", "完全無料", "キッズ歓迎", "撮影OK", "途中入退場OK",
@@ -161,24 +164,25 @@ def main():
     events, organizers = [], []
     for p in paths:
         m = re.fullmatch(r"/(\d{4})/events/([^/]+)/?", p)
-        if m:
+        if m and m.group(1) == YEAR:
             events.append(parse_event(m.group(2), get(p)))
             continue
         m = re.fullmatch(r"/organizers/([^/]+)/?", p)
         if m:
             organizers.append(parse_organizer(m.group(1), get(p)))
 
-    bad = [e["id"] for e in events if not e["title"] or not e["sessions"]]
+    bad = [e["id"] for e in events if not e["title"] or not e["sessions"] or not e["room"]]
     if bad:
-        print("読めなかった企画:", bad, file=sys.stderr)
-    events = [e for e in events if e["title"]]
+        sys.exit(f"題名・日時・場所が読めない企画があるので書き換えない: {bad}")
 
     old = None
     if os.path.exists(OUT):
         with open(OUT, encoding="utf-8") as f:
             old = json.load(f)
-    if not events or (old and len(events) < len(old.get("events", [])) / 2):
+    if not events or (old and len(events) <= len(old.get("events", [])) - 3):
         sys.exit(f"企画が {len(events)} 件しか読めなかったので書き換えない")
+    if not organizers:
+        sys.exit("団体が読めなかったので書き換えない")
 
     events.sort(key=lambda e: (e["floor"] or 99, e["room"], e["title"]))
     organizers.sort(key=lambda o: o["name"])

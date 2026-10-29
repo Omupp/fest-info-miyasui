@@ -31,9 +31,9 @@ function condText(e) {
   const c = new Set(e.conditions);
   const out = [];
   if (c.has("予約不要") && !c.has("予約必須")) out.push("予約不要");
-  if (c.has("完全無料")) out.push("無料");
+  if (c.has("完全無料") && !e.tags.includes("飲食") && !e.tags.includes("物販")) out.push("無料");
   for (const k of ["キッズ歓迎", "撮影OK", "途中入退場OK", "キャッシュレス可", "イートインあり", "高校生・受験生応援"]) if (c.has(k)) out.push(k);
-  return out.join("・");
+  return out.join("／");
 }
 
 function when(e) {
@@ -60,7 +60,7 @@ function detailHTML(e) {
     ${img ? `<div class="ev-img"><img src="${esc(img)}" alt="${esc(e.title)}のポスター" width="960" height="540"></div>` : ""}
     <h3>${esc(e.title)}</h3>
     ${e.organizer ? `<p class="org">${esc(e.organizer.name)}</p>` : ""}
-    ${mustLabel(e) ? `<p class="must-line">${mustTag(e)}</p>` : ""}
+    ${mustLabel(e) ? `<p class="must-line">${mustTag(e)}<span class="must-how">予約のしかたは公式の${officialLinks()}でご確認ください</span></p>` : ""}
     <dl><dt>日時</dt><dd>${esc(when(e))}</dd><dt>場所</dt><dd>${esc(place(e))}</dd></dl>
     ${e.description ? `<p class="desc">${esc(e.description)}</p>` : ""}
     ${lineupHTML(e)}
@@ -71,6 +71,11 @@ function detailHTML(e) {
 }
 
 // 出演順（軽音など）。演奏中・終わった組・休憩を示す
+function officialLinks() {
+  return FEST.links.filter((l) => l.label === "X" || l.label === "Instagram")
+    .map((l) => `<a href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join("・");
+}
+
 function lineupHTML(e) {
   if (!e.lineup.length) return "";
   const now = jstNow();
@@ -86,12 +91,16 @@ function lineupHTML(e) {
   }).join("");
 }
 
-function openDetail(id) {
+let dlgPushed = false; // 詳細を開いたときに履歴を 1 つ積んだか（戻るで詳細だけを閉じるため）
+function openDetail(id, push = true) {
   const e = BY_ID.get(id);
   if (!e) return;
   $("dlg-body").innerHTML = detailHTML(e);
   const d = $("detail");
-  if (!d.open) d.showModal();
+  if (!d.open) {
+    d.showModal();
+    if (push) { history.pushState({ dlg: id }, ""); dlgPushed = true; }
+  }
   // 開いたら一番上から。フォーカスは中身へ（スクロールさせない。閉じるボタンに枠を出さない）
   $("dlg-body").focus({ preventScroll: true });
   d.scrollTop = 0;
@@ -106,8 +115,12 @@ function timedItems(day) {
   for (const e of EVENTS) {
     const own = e.sessions.filter((s) => s.day === day && s.start);
     const extra = e.extraSessions.filter((s) => s.day === day);
-    for (const s of [...own, ...extra]) {
+    const seen = new Set();
+    for (const s of [...extra, ...own]) {
       const start = toMin(s.start);
+      const key = `${s.start}-${s.end || ""}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
       items.push({
         e, start, end: s.end ? toMin(s.end) : start + 60,
         name: s.label || e.title,
@@ -155,7 +168,13 @@ function renderNow(items) {
   const now = jstNow();
   const box = $("nowbox");
   const open = toMin(FEST.open), close = toMin(FEST.close);
-  if (now.key !== state.ttDay || now.min >= close) { box.innerHTML = ""; return; }
+  if (now.key !== state.ttDay) { box.innerHTML = ""; return; }
+  if (now.min >= close) {
+    const next = FEST.days[FEST.days.findIndex((d) => d.key === now.key) + 1];
+    box.innerHTML = `<section class="nowbox done" aria-label="いま"><h2>本日は終了しました</h2>
+      <p class="nb-note">${next ? `あすは ${esc(next.label)} ${esc(FEST.open)}〜${esc(FEST.close)}` : "今年の開催はすべて終わりました"}</p></section>`;
+    return;
+  }
   const live = items.filter((it) => it.start <= now.min && now.min < it.end);
   const next = items.filter((it) => it.start > now.min).slice(0, 3);
   const inHours = now.min >= open;
@@ -195,11 +214,12 @@ function renderGrid(items, from, to) {
     html += `<div class="tt-col${c.items.some((it) => it.lineup.length) ? " wide" : ""}" role="group" aria-label="${esc(where)}"><div class="tt-body" style="height:${height}px">`;
     for (const it of c.items) {
       const short = it.end - it.start < 45;
+      const label = it.name.replace(/^iTLFest\.\s*/, ""); // 表の中では学祭の名前を省く
       const st = liveState(it, now, state.ttDay);
       const lane = n > 1 ? `left:calc(${(100 / n) * it.lane}% + 4px);right:auto;width:calc(${100 / n}% - 8px);` : "";
       const lu = it.lineup.length && !short;
       html += `<button type="button" class="blk ${short ? "short" : ""} ${lu ? "has-lu" : ""} ${st}" data-id="${esc(it.e.id)}" style="top:${(it.start - from) * pxPerMin}px;height:${Math.max(20, (it.end - it.start) * pxPerMin - 2)}px;${lane}">`
-        + `<span class="t tnum">${short ? fmt(it.start) : `${fmt(it.start)}〜${fmt(it.end)}`}${short ? "" : mustTag(it.e)}</span><span class="n">${esc(it.name)}</span>`
+        + `<span class="t tnum">${short ? fmt(it.start) : `${fmt(it.start)}〜${fmt(it.end)}`}</span><span class="n">${esc(label)}${short ? "" : mustTag(it.e)}</span>`
         + (!short && it.sub ? `<span class="s">${esc(it.sub)}</span>` : "")
         + (lu ? it.lineup.map((b) => {
           const bs = now.key !== state.ttDay ? "" : b.endMin <= now.min ? "done" : b.startMin <= now.min ? "on" : "";
@@ -294,8 +314,10 @@ function renderInfo() {
     ["会場", `${FEST.campus}（${FEST.address}）`],
     ["テーマ", FEST.theme],
     ["注意", FEST.closed_floors],
+    ["予約", FEST.reserve_note],
   ];
   $("info").innerHTML = rows.map(([k, v]) => `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`).join("")
+    + `<tr><th>行き方</th><td><a href="${esc(safeUrl(FEST.access_url))}" target="_blank" rel="noopener">公式サイトの「アクセス」</a></td></tr>`
     + `<tr><th>公式</th><td>${FEST.links.map((l) => `<a href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join("・")}</td></tr>`;
 }
 
@@ -333,7 +355,7 @@ function renderDays(el, opts, cur, onPick) {
 
 let curTab = null;
 function route() {
-  if ($("detail").open) $("detail").close();
+  if ($("detail").open) { dlgPushed = false; $("detail").close(); }
   const h = location.hash;
   const tab = h === "#pamph" || h.startsWith("#e-") ? "pamph" : "time";
   // タブを切り替えたら一番上から（前のタブの途中の位置のまま開かない）
@@ -341,14 +363,28 @@ function route() {
   curTab = tab;
   $("view-time").hidden = tab !== "time";
   $("view-pamph").hidden = tab !== "pamph";
-  if (tab === "time") updateHint();
+  if (tab === "time") renderTime();
   document.querySelectorAll(".tabs a").forEach((a) => a.setAttribute("aria-current", a.dataset.tab === tab ? "page" : "false"));
   // #e-企画 で直接開ける（共有用）
-  if (h.startsWith("#e-")) openDetail(decodeURIComponent(h.slice(3)));
+  if (h.startsWith("#e-")) {
+    let id = "";
+    try { id = decodeURIComponent(h.slice(3)); } catch { /* 壊れたリンクは開かない */ }
+    openDetail(id, false);
+  }
+}
+
+async function getJSON(u) {
+  try {
+    const r = await fetch(u, { cache: "no-cache" });
+    if (!r.ok) throw new Error(String(r.status));
+    return await r.json();
+  } catch {
+    return (await fetch(u, { cache: "force-cache" })).json();
+  }
 }
 
 async function main() {
-  const [fest, extra] = await Promise.all(["data/fest.json", "data/extra.json"].map((u) => fetch(u, { cache: "no-cache" }).then((r) => r.json())));
+  const [fest, extra] = await Promise.all(["data/fest.json", "data/extra.json"].map(getJSON));
   FEST = extra.festival;
   ORGS = fest.organizers;
   EVENTS = fest.events.map((e) => {
@@ -381,7 +417,7 @@ async function main() {
   const upd = fest.updated_at ? fest.updated_at.replace(/^\d{4}-(\d\d)-(\d\d)T(\d\d:\d\d).*/, (_, m, d, t) => `${+m}/${+d} ${t}`) : "";
   $("foot").innerHTML = `<p>非公式のまとめです。最新の情報は<a href="https://itlfest.com/" target="_blank" rel="noopener">公式サイト</a>でご確認ください。</p>
     <p>企画の情報は<a href="${esc(safeUrl(fest.source))}" target="_blank" rel="noopener">学祭ポータル</a>（C3 | Creative Computing Club）から。画像と文章は iTLFest.実行委員会と各団体のものです。時刻の一部はポスターと公式サイトから補いました。</p>
-    ${upd ? `<p>データの更新：${esc(upd)}</p>` : ""}
+    ${upd ? `<p>学祭ポータルの内容が最後に変わったのは ${esc(upd)} です（1 時間ごとに確かめています）。</p>` : ""}
     ${sourcesHTML()}`;
 
   renderInfo();
@@ -408,11 +444,21 @@ async function main() {
   });
   $("dlg-close").onclick = () => $("detail").close();
   $("detail").addEventListener("click", (ev) => { if (ev.target === ev.currentTarget) ev.currentTarget.close(); });
-  $("detail").addEventListener("close", () => { if (location.hash.startsWith("#e-")) history.replaceState(null, "", "#pamph"); });
-  setInterval(() => { if (!$("view-time").hidden) renderTime(); }, 60e3);
+  $("detail").addEventListener("close", () => {
+    if (dlgPushed) { dlgPushed = false; history.back(); return; } // 閉じるボタン：積んだ履歴を戻す
+    if (!$("detail").open && location.hash.startsWith("#e-")) history.replaceState(null, "", "#pamph");
+  });
+  window.addEventListener("popstate", () => { if (dlgPushed && $("detail").open) { dlgPushed = false; $("detail").close(); } });
+  setInterval(() => {
+    if ($("view-time").hidden) return;
+    // 「いま」の箱の高さが変わっても、その下を読んでいる人の位置がずれないように
+    const box = $("nowbox"), before = box.offsetHeight, above = box.getBoundingClientRect().bottom < 80;
+    renderTime();
+    if (above) window.scrollBy(0, box.offsetHeight - before);
+  }, 60e3);
 }
 
 main().catch((err) => {
   console.error(err);
-  document.querySelector("main").innerHTML = `<p class="empty">データを読み込めませんでした。</p>`;
+  document.querySelector("main").innerHTML = `<p class="empty">データを読み込めませんでした。<button type="button" class="retry" onclick="location.reload()">もう一度読み込む</button></p>`;
 });
