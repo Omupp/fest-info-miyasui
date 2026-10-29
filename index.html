@@ -10,7 +10,7 @@
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#141414" media="(prefers-color-scheme: dark)">
-<link rel="stylesheet" href="style.css?v=4">
+<link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
 <header class="site">
@@ -28,20 +28,25 @@
 
 <main>
   <section id="view-time" hidden>
-    <div class="days" role="tablist" id="tt-days"></div>
-    <div class="tt-scroll"><div class="tt" id="tt"></div></div>
-    <h2 class="sec">終日</h2>
-    <table class="ledger" id="allday"></table>
+    <div class="days" role="group" aria-label="日付" id="tt-days"></div>
+    <div id="nowbox"></div>
+    <h2 class="sec">時間が決まっている企画</h2>
+    <ul class="rows tt-list" id="tt-list"></ul>
+    <div class="tt-wide"><div class="tt" id="tt"></div></div>
+    <h2 class="sec" id="allday-head">終日</h2>
+    <ul class="rows" id="allday"></ul>
   </section>
 
   <section id="view-pamph" hidden>
-    <table class="ledger info" id="info"></table>
     <div class="filter">
-      <div class="days" role="tablist" id="pf-days"></div>
-      <input type="search" id="q" placeholder="さがす" autocomplete="off" enterkeyhint="search">
+      <div class="days" role="group" aria-label="日付" id="pf-days"></div>
+      <input type="search" id="q" placeholder="企画名・団体・教室でさがす" aria-label="企画をさがす" autocomplete="off" enterkeyhint="search">
     </div>
+    <nav class="floor-nav" id="floor-nav" aria-label="階"></nav>
     <div id="floors"></div>
     <p class="empty" id="empty" hidden>見つかりません</p>
+    <h2 class="sec">ご案内</h2>
+    <table class="ledger" id="info"></table>
     <h2 class="sec">団体</h2>
     <div id="orgs"></div>
   </section>
@@ -54,6 +59,6 @@
   <div id="dlg-body"></div>
 </dialog>
 
-<script src="app.js?v=4"></script>
+<script src="app.js?v=9"></script>
 </body>
 </html>

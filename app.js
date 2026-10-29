@@ -4,7 +4,9 @@ const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const safeUrl = (u) => (/^(https?:|mailto:)/i.test(u || "") ? u : "#");
 const toMin = (t) => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
+const fmt = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, "0")}`;
 const norm = (s) => String(s || "").normalize("NFKC").toLowerCase();
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 let FEST, EVENTS, ORGS, BY_ID;
 const state = { ttDay: null, pfDay: "all", q: "" };
@@ -15,28 +17,23 @@ function jstNow() {
   return { key, min: d.getUTCHours() * 60 + d.getUTCMinutes() };
 }
 
-function place(e) {
-  return [e.floor ? `${e.floor}階` : "", e.room].filter(Boolean).join(" ");
-}
+const place = (e) => [e.floor ? `${e.floor}階` : "", e.room].filter(Boolean).join(" ");
 
-function dayLabel(key) {
-  return (FEST.days.find((d) => d.key === key) || { label: key }).label;
+// 予約が要るか（ポケモン部は大会だけ予約制）
+function mustLabel(e) {
+  if (!e.conditions.includes("予約必須")) return "";
+  return e.conditions.includes("予約不要") ? "一部予約必須" : "予約必須";
 }
+const mustTag = (e) => (mustLabel(e) ? `<span class="tag must">${mustLabel(e)}</span>` : "");
 
-// 予約・無料などを短く
-function conds(e) {
+function condText(e) {
   const c = new Set(e.conditions);
   const out = [];
-  if (c.has("予約必須") && c.has("予約不要")) out.push({ t: "一部予約必須", must: true });
-  else if (c.has("予約必須")) out.push({ t: "予約必須", must: true });
-  else if (c.has("予約不要")) out.push({ t: "予約不要" });
-  if (c.has("完全無料")) out.push({ t: "無料" });
-  for (const k of ["キッズ歓迎", "撮影OK", "途中入退場OK", "キャッシュレス可", "イートインあり", "高校生・受験生応援"]) {
-    if (c.has(k)) out.push({ t: k });
-  }
-  return out;
+  if (c.has("予約不要") && !c.has("予約必須")) out.push("予約不要");
+  if (c.has("完全無料")) out.push("無料");
+  for (const k of ["キッズ歓迎", "撮影OK", "途中入退場OK", "キャッシュレス可", "イートインあり", "高校生・受験生応援"]) if (c.has(k)) out.push(k);
+  return out.join("・");
 }
-const isMust = (e) => e.conditions.includes("予約必須");
 
 function when(e) {
   const per = FEST.days
@@ -51,74 +48,105 @@ function when(e) {
   return per.map((p) => `${p.label} ${p.txt}`).join("、");
 }
 
-function evHTML(e) {
+/* ---------- 詳細 ---------- */
+
+function detailHTML(e) {
   const img = e.image_local || e.image;
-  const cs = conds(e);
-  return `<article class="ev${img ? " has-img" : ""}" id="e-${esc(e.id)}">
-    ${img ? `<div class="ev-img"><img src="${esc(img)}" alt="" loading="lazy" width="960" height="540"></div>` : ""}
-    <div class="ev-main">
-      <h3>${esc(e.title)}</h3>
-      ${e.organizer ? `<p class="org">${esc(e.organizer.name)}</p>` : ""}
-      <dl><dt>日時</dt><dd>${esc(when(e))}</dd><dt>場所</dt><dd>${esc(place(e))}</dd></dl>
-      ${e.description ? `<p class="desc">${esc(e.description)}</p>` : ""}
-      ${e.notes.length ? `<ul class="notes">${e.notes.map((n) => `<li data-from="${esc(n.from)}">${esc(n.text)}</li>`).join("")}</ul>` : ""}
-      ${cs.length ? `<p class="conds">${cs.map((c) => (c.must ? `<span class="m">${esc(c.t)}</span>` : esc(c.t))).join("・")}</p>` : ""}
-      <p class="src"><a href="${esc(safeUrl(e.url))}" target="_blank" rel="noopener">元のページ</a></p>
-    </div>
+  const cond = condText(e);
+  return `<article class="ev">
+    ${img ? `<div class="ev-img"><img src="${esc(img)}" alt="${esc(e.title)}のポスター" width="960" height="540"></div>` : ""}
+    <h3>${esc(e.title)}</h3>
+    ${e.organizer ? `<p class="org">${esc(e.organizer.name)}</p>` : ""}
+    ${mustLabel(e) ? `<p class="must-line">${mustTag(e)}</p>` : ""}
+    <dl><dt>日時</dt><dd>${esc(when(e))}</dd><dt>場所</dt><dd>${esc(place(e))}</dd></dl>
+    ${e.description ? `<p class="desc">${esc(e.description)}</p>` : ""}
+    ${e.notes.length ? `<ul class="notes">${e.notes.map((n) => `<li><span class="from">${esc(n.from)}より</span>${esc(n.text)}</li>`).join("")}</ul>` : ""}
+    ${cond ? `<p class="conds">${esc(cond)}</p>` : ""}
+    <p class="src"><a href="${esc(safeUrl(e.url))}" target="_blank" rel="noopener">学祭ポータルで見る</a></p>
   </article>`;
+}
+
+function openDetail(id) {
+  const e = BY_ID.get(id);
+  if (!e) return;
+  $("dlg-body").innerHTML = detailHTML(e);
+  const d = $("detail");
+  if (!d.open) d.showModal();
+  d.scrollTop = 0;
 }
 
 /* ---------- タイムテーブル ---------- */
 
-function gridItems(day) {
+// 時刻の決まった枠（学祭ポータルの時刻＋ポスターから補った時刻）
+function timedItems(day) {
   const items = [];
   for (const e of EVENTS) {
-    const timed = e.sessions.filter((s) => s.day === day && s.start);
+    const own = e.sessions.filter((s) => s.day === day && s.start);
     const extra = e.extraSessions.filter((s) => s.day === day);
-    for (const s of [...timed, ...extra]) {
+    for (const s of [...own, ...extra]) {
       const start = toMin(s.start);
-      const end = s.end ? toMin(s.end) : start + 60;
-      items.push({ e, start, end, s });
+      items.push({
+        e, start, end: s.end ? toMin(s.end) : start + 60,
+        name: s.label || e.title,
+        sub: s.label ? e.title : s.sub || "",
+      });
     }
   }
-  return items;
+  return items.sort((a, b) => a.start - b.start || (a.e.floor ?? 99) - (b.e.floor ?? 99));
 }
 
 function alldayItems(day) {
-  return EVENTS.filter((e) => {
-    if (!e.sessions.some((s) => s.day === day && s.allday)) return false;
-    return !(e.replaceAllday && e.extraSessions.some((s) => s.day === day));
-  });
+  return EVENTS.filter((e) => e.sessions.some((s) => s.day === day && s.allday) && !(e.replaceAllday && e.extraSessions.some((s) => s.day === day)));
 }
 
-function renderTime() {
-  const day = state.ttDay;
-  renderDays($("tt-days"), FEST.days.map((d) => [d.key, d.label]), day, (k) => { state.ttDay = k; renderTime(); });
+function liveState(it, now, day) {
+  if (now.key !== day) return "";
+  if (it.end <= now.min) return "past";
+  if (it.start <= now.min) return "live";
+  return "";
+}
 
-  const items = gridItems(day);
-  let from = toMin(FEST.open), to = toMin(FEST.close);
-  for (const it of items) { from = Math.min(from, Math.floor(it.start / 60) * 60); to = Math.max(to, Math.ceil(it.end / 60) * 60); }
+function timedRow(it, st) {
+  return `<li><button type="button" class="row ${st}" data-id="${esc(it.e.id)}">
+    <span class="r-time tnum"><b>${fmt(it.start)}</b><small>〜${fmt(it.end)}</small></span>
+    <span class="r-main">
+      <span class="r-title">${esc(it.name)}</span>
+      <span class="r-meta">${esc(place(it.e))}${st === "live" ? `<span class="tag live">開催中</span>` : ""}${mustTag(it.e)}</span>
+      ${it.sub ? `<span class="r-meta">${esc(it.sub)}</span>` : ""}
+    </span>
+  </button></li>`;
+}
+
+function renderNow(items) {
+  const now = jstNow();
+  const box = $("nowbox");
+  const open = toMin(FEST.open), close = toMin(FEST.close);
+  if (now.key !== state.ttDay || now.min >= close) { box.innerHTML = ""; return; }
+  const live = items.filter((it) => it.start <= now.min && now.min < it.end);
+  const next = items.filter((it) => it.start > now.min).slice(0, 3);
+  const inHours = now.min >= open;
+  box.innerHTML = `<section class="nowbox" aria-label="いま">
+    <h2>${inHours ? "いま" : "開場前"}<span class="clock tnum">${fmt(now.min)}</span></h2>
+    ${live.length ? `<ul class="rows">${live.map((it) => timedRow(it, "live")).join("")}</ul>` : ""}
+    ${next.length ? `<h3>このあと</h3><ul class="rows">${next.map((it) => timedRow(it, "")).join("")}</ul>` : ""}
+  </section>`;
+}
+
+function renderGrid(items, from, to) {
   const pxPerMin = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--hour")) / 60;
   const height = (to - from) * pxPerMin;
-
-  // 場所ごとの列
+  const now = jstNow();
   const cols = new Map();
   for (const it of items) {
     const k = `${String(it.e.floor ?? 99).padStart(2, "0")}|${it.e.room}`;
     if (!cols.has(k)) cols.set(k, { floor: it.e.floor, room: it.e.room, items: [] });
     cols.get(k).items.push(it);
   }
-  const colList = [...cols.entries()].sort((a, b) => a[0].localeCompare(b[0], "ja")).map(([, v]) => v);
-
   let html = `<div class="tt-col axis"><div class="tt-head"></div><div class="tt-body" style="height:${height}px">`;
-  for (let m = from; m <= to; m += 60) {
-    html += `<span class="hour" style="top:${(m - from) * pxPerMin}px">${m / 60}:00</span>`;
-  }
+  for (let m = from; m <= to; m += 60) html += `<span class="hour tnum" style="top:${(m - from) * pxPerMin}px">${m / 60}:00</span>`;
   html += `</div></div>`;
-
-  for (const c of colList) {
+  for (const [, c] of [...cols.entries()].sort((a, b) => a[0].localeCompare(b[0], "ja"))) {
     // 重なったら横に並べる
-    c.items.sort((a, b) => a.start - b.start || b.end - a.end);
     const lanes = [];
     for (const it of c.items) {
       let l = lanes.findIndex((end) => end <= it.start);
@@ -129,56 +157,80 @@ function renderTime() {
     const n = Math.max(1, lanes.length);
     html += `<div class="tt-col"><div class="tt-head">${c.floor ? `<span>${c.floor}階</span>` : ""}<b>${esc(c.room)}</b></div><div class="tt-body" style="height:${height}px">`;
     for (const it of c.items) {
-      const top = (it.start - from) * pxPerMin;
-      const h = Math.max(18, (it.end - it.start) * pxPerMin - 2);
       const short = it.end - it.start < 45;
-      const name = it.s.label || it.e.title;
-      const sub = it.s.label ? it.e.title : it.s.sub || "";
-      const t = `${fmt(it.start)}〜${fmt(it.end)}`;
-      const lane = n > 1 ? `left:calc(${(100 / n) * it.lane}% + 3px);right:auto;width:calc(${100 / n}% - 6px);` : "";
-      html += `<button type="button" class="blk${short ? " short" : ""}" data-id="${esc(it.e.id)}" data-s="${it.start}" data-e="${it.end}" style="top:${top}px;height:${h}px;${lane}">`
-        + `<span class="t">${short ? fmt(it.start) : t}</span><span class="n">${esc(name)}</span>`
-        + (!short && sub ? `<span class="s">${esc(sub)}</span>` : "")
-        + (!short && isMust(it.e) ? `<span class="m">予約必須</span>` : "")
+      const st = liveState(it, now, state.ttDay);
+      const lane = n > 1 ? `left:calc(${(100 / n) * it.lane}% + 4px);right:auto;width:calc(${100 / n}% - 8px);` : "";
+      html += `<button type="button" class="blk ${short ? "short" : ""} ${st}" data-id="${esc(it.e.id)}" style="top:${(it.start - from) * pxPerMin}px;height:${Math.max(20, (it.end - it.start) * pxPerMin - 2)}px;${lane}">`
+        + `<span class="t tnum">${short ? fmt(it.start) : `${fmt(it.start)}〜${fmt(it.end)}`}${short ? "" : mustTag(it.e)}</span><span class="n">${esc(it.name)}</span>`
+        + (!short && it.sub ? `<span class="s">${esc(it.sub)}</span>` : "")
         + `</button>`;
     }
     html += `</div></div>`;
   }
-  const tt = $("tt");
-  tt.innerHTML = html;
-  tt.dataset.from = from;
-  tt.dataset.to = to;
-  tt.dataset.ppm = pxPerMin;
-  drawNow();
-
-  const rows = alldayItems(day).map((e) => {
-    // 一覧には時刻の入った注記の最初の文だけ
-    const note = e.notes.find((n) => /\d:\d\d/.test(n.text));
-    return `<tr class="link" data-id="${esc(e.id)}"><th>${esc(place(e))}</th><td>${esc(e.title)}${isMust(e) ? `<span class="m">${e.conditions.includes("予約不要") ? "一部予約必須" : "予約必須"}</span>` : ""}${note ? `<span class="note">${esc(note.text.split("。")[0])}</span>` : ""}</td></tr>`;
-  });
-  $("allday").innerHTML = rows.join("") || `<tr><td class="note">なし</td></tr>`;
+  $("tt").innerHTML = html;
+  if (now.key === state.ttDay && now.min >= from && now.min <= to) {
+    for (const body of $("tt").querySelectorAll(".tt-body")) body.insertAdjacentHTML("beforeend", `<div class="nowline" style="top:${(now.min - from) * pxPerMin}px"></div>`);
+  }
 }
 
-function fmt(m) { return `${Math.floor(m / 60)}:${String(m % 60).padStart(2, "0")}`; }
+function renderTime() {
+  const day = state.ttDay;
+  renderDays($("tt-days"), FEST.days.map((d) => [d.key, d.label]), day, (k) => { state.ttDay = k; renderTime(); });
+  const items = timedItems(day);
+  let from = toMin(FEST.open), to = toMin(FEST.close);
+  for (const it of items) { from = Math.min(from, Math.floor(it.start / 60) * 60); to = Math.max(to, Math.ceil(it.end / 60) * 60); }
 
-function drawNow() {
-  const tt = $("tt");
-  if (!tt.dataset.from) return;
-  tt.querySelectorAll(".nowline").forEach((n) => n.remove());
-  tt.querySelectorAll(".blk.now").forEach((n) => n.classList.remove("now"));
+  renderNow(items);
   const now = jstNow();
-  const from = +tt.dataset.from, to = +tt.dataset.to, ppm = +tt.dataset.ppm;
-  if (now.key !== state.ttDay || now.min < from || now.min > to) return;
-  for (const body of tt.querySelectorAll(".tt-body")) {
-    const line = document.createElement("div");
-    line.className = "nowline";
-    line.style.top = `${(now.min - from) * ppm}px`;
-    body.appendChild(line);
-  }
-  tt.querySelectorAll(".blk").forEach((b) => { if (+b.dataset.s <= now.min && now.min < +b.dataset.e) b.classList.add("now"); });
+  $("tt-list").innerHTML = items.map((it) => timedRow(it, liveState(it, now, day))).join("") || `<li class="empty">なし</li>`;
+  renderGrid(items, from, to);
+
+  $("allday-head").innerHTML = `終日<small>${esc(FEST.open)}〜${esc(FEST.close)}</small>`;
+  $("allday").innerHTML = alldayItems(day).map((e) => {
+    // 一覧には時刻の入った注記を 1 文だけ（終日と同じ「10:00〜17:00」は書かない）
+    const full = `${FEST.open}〜${FEST.close}`;
+    const note = e.notes.flatMap((n) => n.text.split("。")).find((t) => /\d:\d\d/.test(t) && t.trim() !== full);
+    return `<li><button type="button" class="row" data-id="${esc(e.id)}"><span class="r-main">
+      <span class="r-title">${esc(e.title)}</span>
+      <span class="r-meta">${esc(place(e))}${mustTag(e)}</span>
+      ${note ? `<span class="r-meta">${esc(note.trim())}</span>` : ""}
+    </span></button></li>`;
+  }).join("") || `<li class="empty">なし</li>`;
 }
 
 /* ---------- パンフ ---------- */
+
+function pamphRow(e) {
+  const img = e.image_local || e.image;
+  return `<li><button type="button" class="row" data-id="${esc(e.id)}">
+    <span class="r-main">
+      <span class="r-title">${esc(e.title)}</span>
+      <span class="r-meta">${esc(e.room)}・${esc(when(e))}${mustTag(e)}</span>
+      ${e.organizer ? `<span class="r-meta">${esc(e.organizer.name)}</span>` : ""}
+    </span>
+    ${img ? `<span class="r-thumb"><img src="${esc(img)}" alt="" loading="lazy" width="112" height="63"></span>` : ""}
+  </button></li>`;
+}
+
+function renderPamph() {
+  renderDays($("pf-days"), [["all", "すべて"], ...FEST.days.map((d) => [d.key, d.label])], state.pfDay, (k) => { state.pfDay = k; renderPamph(); });
+  const words = norm(state.q).trim().split(/\s+/).filter(Boolean);
+  const list = EVENTS.filter((e) => (state.pfDay === "all" || e.sessions.some((s) => s.day === state.pfDay)) && words.every((w) => e.haystack.includes(w)));
+  const floors = new Map();
+  for (const e of list) {
+    const k = e.floor ?? 99;
+    if (!floors.has(k)) floors.set(k, []);
+    floors.get(k).push(e);
+  }
+  const keys = [...floors.keys()].sort((a, b) => a - b);
+  const name = (f) => (f === 99 ? "その他" : `${f}階`);
+  $("floor-nav").innerHTML = keys.length > 1 ? keys.map((f) => `<a href="#f-${f}" data-floor="${f}">${name(f)}</a>`).join("") : "";
+  $("floors").innerHTML = keys.map((f) => `<section class="floor" id="f-${f}">
+    <h2 class="sec">${name(f)}<small>${floors.get(f).length}件</small></h2>
+    <ul class="rows">${floors.get(f).map(pamphRow).join("")}</ul>
+  </section>`).join("");
+  $("empty").hidden = list.length > 0;
+}
 
 function renderInfo() {
   const rows = [
@@ -191,27 +243,14 @@ function renderInfo() {
     + `<tr><th>公式</th><td>${FEST.links.map((l) => `<a href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join("・")}</td></tr>`;
 }
 
-function renderPamph() {
-  renderDays($("pf-days"), [["all", "すべて"], ...FEST.days.map((d) => [d.key, d.label])], state.pfDay, (k) => { state.pfDay = k; renderPamph(); });
-  const q = norm(state.q).trim();
-  const list = EVENTS.filter((e) => (state.pfDay === "all" || e.sessions.some((s) => s.day === state.pfDay)) && (!q || q.split(/\s+/).every((w) => e.haystack.includes(w))));
-  const floors = new Map();
-  for (const e of list) {
-    const k = e.floor ?? 99;
-    if (!floors.has(k)) floors.set(k, []);
-    floors.get(k).push(e);
-  }
-  $("floors").innerHTML = [...floors.entries()].sort((a, b) => a[0] - b[0])
-    .map(([f, es]) => `<section class="floor"><h2>${f === 99 ? "その他" : `${f}階`}</h2>${es.map(evHTML).join("")}</section>`).join("");
-  $("empty").hidden = list.length > 0;
-}
-
 function renderOrgs() {
   $("orgs").innerHTML = ORGS.map((o) => {
     const evs = EVENTS.filter((e) => e.organizer && e.organizer.id === o.id);
+    // 元のサイトの「本Webサイト」はこのページのことではないので読み替える
+    const desc = o.description.replace("本Webサイト", "学祭ポータル");
     return `<div class="org-item"><h3>${esc(o.name)}</h3>
-      ${o.description ? `<p>${esc(o.description.replace("本Webサイト", "学祭ポータル"))}</p>` : ""}
-      <p>${evs.map((e) => `<a href="#e-${esc(e.id)}" data-open="${esc(e.id)}">${esc(e.title)}</a>`).join("・")}</p>
+      ${desc ? `<p>${esc(desc)}</p>` : ""}
+      <p class="evs">${evs.map((e) => `<a href="#e-${esc(e.id)}" data-id="${esc(e.id)}">${esc(e.title)}</a>`).join("")}</p>
       ${o.links.length ? `<p class="links">${o.links.map((l) => `<a href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener">${esc(l.service)}</a>`).join("")}</p>` : ""}
     </div>`;
   }).join("");
@@ -220,25 +259,19 @@ function renderOrgs() {
 /* ---------- 共通 ---------- */
 
 function renderDays(el, opts, cur, onPick) {
-  el.innerHTML = opts.map(([k, l]) => `<button type="button" role="tab" aria-selected="${k === cur}" data-k="${esc(k)}">${esc(l)}</button>`).join("");
+  el.innerHTML = opts.map(([k, l]) => `<button type="button" aria-pressed="${k === cur}" data-k="${esc(k)}">${esc(l)}</button>`).join("");
   el.onclick = (ev) => { const b = ev.target.closest("button"); if (b) onPick(b.dataset.k); };
-}
-
-function openDetail(id) {
-  const e = BY_ID.get(id);
-  if (!e) return;
-  $("dlg-body").innerHTML = evHTML(e);
-  const d = $("detail");
-  if (!d.open) d.showModal();
-  d.scrollTop = 0;
 }
 
 function route() {
   if ($("detail").open) $("detail").close();
-  const tab = location.hash === "#pamph" ? "pamph" : "time";
+  const h = location.hash;
+  const tab = h === "#pamph" || h.startsWith("#e-") ? "pamph" : "time";
   $("view-time").hidden = tab !== "time";
   $("view-pamph").hidden = tab !== "pamph";
   document.querySelectorAll(".tabs a").forEach((a) => a.setAttribute("aria-current", a.dataset.tab === tab ? "page" : "false"));
+  // #e-企画 で直接開ける（共有用）
+  if (h.startsWith("#e-")) openDetail(decodeURIComponent(h.slice(3)));
 }
 
 async function main() {
@@ -261,10 +294,10 @@ async function main() {
   const now = jstNow();
   state.ttDay = FEST.days.some((d) => d.key === now.key) ? now.key : FEST.days[0].key;
 
-  $("site-sub").innerHTML = `${esc(FEST.days.map((d) => d.label).join("・"))} ${esc(FEST.open)}〜${esc(FEST.close)}<br>${esc(FEST.campus)}`;
+  $("site-sub").innerHTML = `<span class="when">${esc(FEST.days.map((d) => d.label).join("・"))} <span class="nw">${esc(FEST.open)}〜${esc(FEST.close)}</span></span><span class="where">${esc(FEST.campus)}</span>`;
   const upd = fest.updated_at ? fest.updated_at.replace(/^\d{4}-(\d\d)-(\d\d)T(\d\d:\d\d).*/, (_, m, d, t) => `${+m}/${+d} ${t}`) : "";
   $("foot").innerHTML = `<p>非公式のまとめです。最新の情報は<a href="https://itlfest.com/" target="_blank" rel="noopener">公式サイト</a>でご確認ください。</p>
-    <p>企画の情報：<a href="${esc(safeUrl(fest.source))}" target="_blank" rel="noopener">学祭ポータル</a>（C3 | Creative Computing Club）。画像と文章は iTLFest.実行委員会と各団体のものです。時刻の一部はポスターと公式サイトから補いました。</p>
+    <p>企画の情報は<a href="${esc(safeUrl(fest.source))}" target="_blank" rel="noopener">学祭ポータル</a>（C3 | Creative Computing Club）から。画像と文章は iTLFest.実行委員会と各団体のものです。時刻の一部はポスターと公式サイトから補いました。</p>
     ${upd ? `<p>データの更新：${esc(upd)}</p>` : ""}`;
 
   renderInfo();
@@ -276,14 +309,21 @@ async function main() {
   window.addEventListener("hashchange", route);
   $("q").addEventListener("input", (ev) => { state.q = ev.target.value; renderPamph(); });
   document.addEventListener("click", (ev) => {
-    const t = ev.target.closest(".blk, tr.link, [data-open]");
-    if (!t) return;
+    const fl = ev.target.closest("[data-floor]");
+    if (fl) {
+      ev.preventDefault();
+      $(`f-${fl.dataset.floor}`).scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+      return;
+    }
+    const t = ev.target.closest("[data-id]");
+    if (!t || t.closest("dialog")) return;
     ev.preventDefault();
-    openDetail(t.dataset.id || t.dataset.open);
+    openDetail(t.dataset.id);
   });
   $("dlg-close").onclick = () => $("detail").close();
   $("detail").addEventListener("click", (ev) => { if (ev.target === ev.currentTarget) ev.currentTarget.close(); });
-  setInterval(drawNow, 60e3);
+  $("detail").addEventListener("close", () => { if (location.hash.startsWith("#e-")) history.replaceState(null, "", "#pamph"); });
+  setInterval(() => { if (!$("view-time").hidden) renderTime(); }, 60e3);
 }
 
 main().catch((err) => {
