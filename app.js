@@ -24,6 +24,7 @@ function mustLabel(e) {
   if (!e.conditions.includes("予約必須")) return "";
   return e.conditions.includes("予約不要") ? "一部予約必須" : "予約必須";
 }
+const CHEV = `<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>`;
 const mustTag = (e) => (mustLabel(e) ? `<span class="tag must">${mustLabel(e)}</span>` : "");
 
 function condText(e) {
@@ -38,7 +39,9 @@ function condText(e) {
 function when(e) {
   const per = FEST.days
     .map((d) => {
-      const ss = e.sessions.filter((s) => s.day === d.key);
+      // 「終日」をポスターの時刻で置き換える企画（軽音）は、そちらを出す
+      const ex = e.extraSessions.filter((s) => s.day === d.key);
+      const ss = e.replaceAllday && ex.length ? ex : e.sessions.filter((s) => s.day === d.key);
       if (!ss.length) return null;
       const txt = ss.some((s) => s.allday) ? "終日" : ss.map((s) => (s.end ? `${s.start}〜${s.end}` : `${s.start}〜`)).join("、");
       return { label: d.label, txt };
@@ -141,7 +144,7 @@ function timedRow(it, st) {
       <span class="r-title">${esc(it.name)}</span>
       <span class="r-meta">${esc(place(it.e))}${st === "live" ? `<span class="tag live">開催中</span>` : ""}${mustTag(it.e)}</span>
       ${subText(it, st) ? `<span class="r-meta">${esc(subText(it, st))}</span>` : ""}
-    </span>
+    </span>${CHEV}
   </button></li>`;
 }
 
@@ -183,7 +186,7 @@ function renderGrid(items, from, to) {
       it.lane = l;
     }
     const n = Math.max(1, lanes.length);
-    html += `<div class="tt-col"><div class="tt-head">${c.floor ? `<span>${c.floor}階</span>` : ""}<b>${esc(c.room)}</b></div><div class="tt-body" style="height:${height}px">`;
+    html += `<div class="tt-col${c.items.some((it) => it.lineup.length) ? " wide" : ""}"><div class="tt-head">${c.floor ? `<span>${c.floor}階</span>` : ""}<b>${esc(c.room)}</b></div><div class="tt-body" style="height:${height}px">`;
     for (const it of c.items) {
       const short = it.end - it.start < 45;
       const st = liveState(it, now, state.ttDay);
@@ -206,6 +209,12 @@ function renderGrid(items, from, to) {
   }
 }
 
+// 表が画面からはみ出すときだけ「左右にずらせる」と出す
+function updateHint() {
+  const w = $("tt-wrap");
+  $("tt-hint").hidden = w.scrollWidth <= w.clientWidth + 1;
+}
+
 function renderTime() {
   const day = state.ttDay;
   renderDays($("tt-days"), FEST.days.map((d) => [d.key, d.label]), day, (k) => { state.ttDay = k; renderTime(); });
@@ -215,8 +224,8 @@ function renderTime() {
 
   renderNow(items);
   const now = jstNow();
-  $("tt-list").innerHTML = items.map((it) => timedRow(it, liveState(it, now, day))).join("") || `<li class="empty">なし</li>`;
   renderGrid(items, from, to);
+  updateHint();
 
   $("allday-head").innerHTML = `終日<small>${esc(FEST.open)}〜${esc(FEST.close)}</small>`;
   $("allday").innerHTML = alldayItems(day).map((e) => {
@@ -227,7 +236,7 @@ function renderTime() {
       <span class="r-title">${esc(e.title)}</span>
       <span class="r-meta">${esc(place(e))}${mustTag(e)}</span>
       ${note ? `<span class="r-meta">${esc(note.trim())}</span>` : ""}
-    </span></button></li>`;
+    </span>${CHEV}</button></li>`;
   }).join("") || `<li class="empty">なし</li>`;
 }
 
@@ -241,7 +250,7 @@ function pamphRow(e) {
       <span class="r-meta">${esc(e.room)}・${esc(when(e))}${mustTag(e)}</span>
       ${e.organizer ? `<span class="r-meta">${esc(e.organizer.name)}</span>` : ""}
     </span>
-    ${img ? `<span class="r-thumb"><img src="${esc(img)}" alt="" loading="lazy" width="112" height="63"></span>` : ""}
+    ${img ? `<span class="r-thumb"><img src="${esc(img)}" alt="" loading="lazy" width="104" height="59"></span>` : ""}${CHEV}
   </button></li>`;
 }
 
@@ -314,6 +323,7 @@ function route() {
   const tab = h === "#pamph" || h.startsWith("#e-") ? "pamph" : "time";
   $("view-time").hidden = tab !== "time";
   $("view-pamph").hidden = tab !== "pamph";
+  if (tab === "time") updateHint();
   document.querySelectorAll(".tabs a").forEach((a) => a.setAttribute("aria-current", a.dataset.tab === tab ? "page" : "false"));
   // #e-企画 で直接開ける（共有用）
   if (h.startsWith("#e-")) openDetail(decodeURIComponent(h.slice(3)));
@@ -363,6 +373,7 @@ async function main() {
   route();
 
   window.addEventListener("hashchange", route);
+  window.addEventListener("resize", updateHint);
   $("q").addEventListener("input", (ev) => { state.q = ev.target.value; renderPamph(); });
   document.addEventListener("click", (ev) => {
     const fl = ev.target.closest("[data-floor]");

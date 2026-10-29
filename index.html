@@ -3,52 +3,53 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>iTLFest.2026 タイムテーブルとパンフ（非公式）</title>
+<title>iTLFest.2026 タイムテーブルとパンフ（非公式まとめサイト）</title>
 <meta name="description" content="iTLFest.2026（中央大学 市ヶ谷田町キャンパス・10/31〜11/1）の企画を、タイムテーブルとパンフの形にまとめた非公式のページです。">
-<meta property="og:title" content="iTLFest.2026 タイムテーブルとパンフ（非公式）">
+<meta property="og:title" content="iTLFest.2026 タイムテーブルとパンフ（非公式まとめサイト）">
 <meta property="og:description" content="10/31（土）・11/1（日）の企画を時間と場所で見られます。">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#141414" media="(prefers-color-scheme: dark)">
-<link rel="stylesheet" href="style.css?v=11">
+<meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="style.css?v=15">
 </head>
 <body>
 <header class="site">
-  <div class="site-title">
-    <h1>iTLFest.2026</h1>
-    <span class="unofficial">非公式</span>
-  </div>
+  <p class="eyebrow">非公式まとめサイト<span class="sepbar" aria-hidden="true">｜</span><a href="https://itlfest.com/" target="_blank" rel="noopener">公式サイトはこちら</a></p>
+  <h1>iTLFest.2026</h1>
   <p class="site-sub" id="site-sub"></p>
 </header>
 
-<nav class="tabs" aria-label="表示の切り替え">
-  <a href="#time" data-tab="time">タイムテーブル</a>
-  <a href="#pamph" data-tab="pamph">パンフ</a>
-</nav>
+<div class="bar">
+  <nav class="seg tabs" aria-label="表示の切り替え">
+    <a href="#time" data-tab="time">タイムテーブル</a>
+    <a href="#pamph" data-tab="pamph">パンフ</a>
+  </nav>
+</div>
 
 <main>
   <section id="view-time" hidden>
-    <div class="days" role="group" aria-label="日付" id="tt-days"></div>
+    <div class="seg" role="group" aria-label="日付" id="tt-days"></div>
     <div id="nowbox"></div>
     <h2 class="sec">時間が決まっている企画</h2>
-    <ul class="rows tt-list" id="tt-list"></ul>
-    <div class="tt-wide"><div class="tt" id="tt"></div></div>
+    <p class="tt-hint" id="tt-hint" hidden>左右にずらすと、ほかの教室も見られます</p>
+    <div class="tt-wrap card" id="tt-wrap"><div class="tt" id="tt"></div></div>
     <h2 class="sec" id="allday-head">終日</h2>
     <ul class="rows" id="allday"></ul>
   </section>
 
   <section id="view-pamph" hidden>
-    <div class="filter">
-      <div class="days" role="group" aria-label="日付" id="pf-days"></div>
+    <div class="seg" role="group" aria-label="日付" id="pf-days"></div>
+    <label class="search">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       <input type="search" id="q" placeholder="企画名・団体・教室でさがす" aria-label="企画をさがす" autocomplete="off" enterkeyhint="search">
-    </div>
+    </label>
     <nav class="floor-nav" id="floor-nav" aria-label="階"></nav>
     <div id="floors"></div>
     <p class="empty" id="empty" hidden>見つかりません</p>
     <h2 class="sec">ご案内</h2>
-    <table class="ledger" id="info"></table>
+    <div class="card"><table class="ledger" id="info"></table></div>
     <h2 class="sec">団体</h2>
-    <div id="orgs"></div>
+    <div class="card" id="orgs"></div>
   </section>
 </main>
 
@@ -56,9 +57,9 @@
 
 <dialog id="detail">
   <div class="dlg-bar"><button type="button" id="dlg-close">閉じる</button></div>
-  <div id="dlg-body"></div>
+  <div id="dlg-body" tabindex="-1" autofocus></div>
 </dialog>
 
-<script src="app.js?v=11"></script>
+<script src="app.js?v=15"></script>
 </body>
 </html>
