@@ -352,7 +352,8 @@ function renderPamph() {
     if (!floors.has(k)) floors.set(k, []);
     floors.get(k).push(e);
   }
-  const keys = [...floors.keys()].sort((a, b) => a - b);
+  // 終日の案内板と同じく、上の階ほど上に（階が分からないものは最後）
+  const keys = [...floors.keys()].sort((a, b) => (a === 99) - (b === 99) || b - a);
   const name = (f) => (f === 99 ? "その他" : `${f}階`);
   $("floors").innerHTML = keys.map((f) => `<section class="floor" id="f-${f}">
     <h2 class="sec">${name(f)}<small>${floors.get(f).length}件</small></h2>
