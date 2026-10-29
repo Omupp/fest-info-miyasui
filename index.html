@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="style.css?v=32">
+<link rel="stylesheet" href="style.css?v=33">
 </head>
 <body>
 <header class="site">
@@ -47,7 +47,7 @@
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       <input type="search" id="q" placeholder="企画名・団体・教室でさがす" aria-label="企画をさがす" autocomplete="off" enterkeyhint="search">
     </label>
-    <nav class="floor-nav" id="floor-nav" aria-label="階"></nav>
+    <div class="chips" role="group" aria-label="ジャンル" id="genre"></div>
     <div id="floors"></div>
     <p class="empty" id="empty" hidden>見つかりません</p>
     <h2 class="sec">ご案内</h2>
@@ -64,6 +64,6 @@
   <div class="dlg-scroll" id="dlg-scroll"></div>
 </dialog>
 
-<script src="app.js?v=32"></script>
+<script src="app.js?v=33"></script>
 </body>
 </html>

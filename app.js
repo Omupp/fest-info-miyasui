@@ -6,10 +6,9 @@ const safeUrl = (u) => (/^(https?:|mailto:)/i.test(u || "") ? u : "#");
 const toMin = (t) => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
 const fmt = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, "0")}`;
 const norm = (s) => String(s || "").normalize("NFKC").toLowerCase();
-const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 let FEST, EVENTS, ORGS, BY_ID;
-const state = { ttDay: null, pfDay: "all", q: "" };
+const state = { ttDay: null, pfDay: "all", genre: "all", q: "" };
 
 function jstNow() {
   const d = new Date(Date.now() + 9 * 3600e3);
@@ -331,10 +330,22 @@ function pamphRow(e) {
   </button></li>`;
 }
 
+// ジャンルで絞る（学祭ポータルのタグから。どの企画もどれかに入る）
+const GENRES = [
+  ["飲食", ["飲食"]],
+  ["ステージ", ["ステージ・公演"]],
+  ["講演", ["講演", "学術・研究発表"]],
+  ["アトラクション", ["アトラクション", "大会・コンテスト"]],
+  ["体験", ["体験・ワークショップ"]],
+  ["展示", ["展示", "物販"]],
+];
+const inGenre = (e, g) => g === "all" || GENRES.find(([name]) => name === g)[1].some((t) => e.tags.includes(t));
+
 function renderPamph() {
   renderDays($("pf-days"), [["all", "すべて"], ...FEST.days.map((d) => [d.key, d.label])], state.pfDay, (k) => { state.pfDay = k; renderPamph(); });
+  renderDays($("genre"), [["all", "すべて"], ...GENRES.map(([name]) => [name, name])], state.genre, (k) => { state.genre = k; renderPamph(); });
   const words = norm(state.q).trim().split(/\s+/).filter(Boolean);
-  const list = EVENTS.filter((e) => (state.pfDay === "all" || e.sessions.some((s) => s.day === state.pfDay)) && words.every((w) => e.haystack.includes(w)));
+  const list = EVENTS.filter((e) => (state.pfDay === "all" || e.sessions.some((s) => s.day === state.pfDay)) && inGenre(e, state.genre) && words.every((w) => e.haystack.includes(w)));
   const floors = new Map();
   for (const e of list) {
     const k = e.floor ?? 99;
@@ -343,7 +354,6 @@ function renderPamph() {
   }
   const keys = [...floors.keys()].sort((a, b) => a - b);
   const name = (f) => (f === 99 ? "その他" : `${f}階`);
-  $("floor-nav").innerHTML = keys.length > 1 ? keys.map((f) => `<a href="#f-${f}" data-floor="${f}">${name(f)}</a>`).join("") : "";
   $("floors").innerHTML = keys.map((f) => `<section class="floor" id="f-${f}">
     <h2 class="sec">${name(f)}<small>${floors.get(f).length}件</small></h2>
     <ul class="rows">${floors.get(f).map(pamphRow).join("")}</ul>
@@ -474,12 +484,6 @@ async function main() {
   $("tt-wrap").addEventListener("scroll", syncHeads, { passive: true });
   $("q").addEventListener("input", (ev) => { state.q = ev.target.value; renderPamph(); });
   document.addEventListener("click", (ev) => {
-    const fl = ev.target.closest("[data-floor]");
-    if (fl) {
-      ev.preventDefault();
-      $(`f-${fl.dataset.floor}`).scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
-      return;
-    }
     const t = ev.target.closest("[data-id]");
     if (!t || t.closest("dialog")) return;
     ev.preventDefault();
