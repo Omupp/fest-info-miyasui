@@ -62,7 +62,6 @@ a { color: var(--accent); text-decoration: none; }
 button { font: inherit; color: inherit; touch-action: manipulation; }
 a, button, summary { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-#dlg-body:focus { outline: none; }
 [hidden] { display: none !important; }
 .tnum { font-variant-numeric: tabular-nums; }
 
@@ -209,9 +208,16 @@ h2.sec small { font-size: 14px; font-weight: 600; color: var(--sub); margin-left
 .blk.short .n { font-size: 13px; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .blk.past { opacity: .45; }
 .blk.live { background: var(--live-bg); border-left-color: var(--live); }
-.blk.has-lu .n { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.blk .lu { display: block; font-size: 12px; line-height: 16px; color: var(--sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.blk .lu.on { color: var(--live); font-weight: 700; }
+.blk > .t, .blk > .n, .blk > .s, .blk > .o { flex-shrink: 0; } /* 押しつぶさない（入りきらない団体名は JS で省く） */
+.blk .o { color: var(--sub); font-size: 12px; opacity: .85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.blk.has-lu { padding: 0; }
+.blk .lu-title { position: absolute; top: 4px; left: 8px; right: 6px; font-weight: 700; font-size: 13px; line-height: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.blk .lu {
+  position: absolute; left: 0; right: 0; display: block; padding: 1px 6px 0 8px;
+  border-top: 1px solid rgba(127, 127, 127, .22);
+  font-size: 12px; line-height: 16px; color: var(--sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.blk .lu.on { background: var(--live-bg); color: var(--live); font-weight: 700; }
 .blk .lu.done { opacity: .5; }
 .nowline { position: absolute; left: 0; right: 0; border-top: 2px solid var(--live); z-index: 1; pointer-events: none; }
 
@@ -267,8 +273,7 @@ dialog {
   padding: 0; border: 0; border-radius: 16px;
   background: var(--card); color: var(--fg);
 }
-dialog { overscroll-behavior: contain; }
-html:has(dialog[open]) { overflow: hidden; }
+dialog[open] { display: flex; flex-direction: column; overflow: hidden; }
 dialog::backdrop { background: rgba(0, 0, 0, .4); }
 @media (max-width: 759px) {
   dialog { margin: auto 0 0; width: 100%; max-width: 100%; max-height: 92dvh; border-radius: 16px 16px 0 0; padding-bottom: env(safe-area-inset-bottom); }
@@ -282,12 +287,12 @@ dialog::backdrop { background: rgba(0, 0, 0, .4); }
 @keyframes sheet-up { from { transform: translateY(100%); } }
 @keyframes fade-in { from { opacity: 0; } }
 .dlg-bar {
-  position: sticky; top: 0; z-index: 1;
+  flex: none;
   display: flex; justify-content: flex-end; align-items: center;
   padding: 6px 8px; background: var(--card);
 }
 .dlg-bar button { min-height: var(--tap); padding: 0 12px; border: 0; background: none; color: var(--accent); font-size: 17px; font-weight: 700; cursor: pointer; }
-#dlg-body { padding: 0 16px 24px; }
+.dlg-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 0 16px 24px; }
 .ev-img img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 12px; background: var(--fill); }
 .ev h3 { margin: 14px 0 0; font-size: 22px; line-height: 1.35; font-weight: 800; }
 .ev .org { color: var(--sub); margin: 2px 0 0; font-size: 14px; }

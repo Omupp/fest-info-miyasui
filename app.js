@@ -95,16 +95,18 @@ let dlgPushed = false; // 詳細を開いたときに履歴を 1 つ積んだか
 function openDetail(id, push = true) {
   const e = BY_ID.get(id);
   if (!e) return;
-  $("dlg-body").innerHTML = detailHTML(e);
+  // 中身の入れ物は毎回新しく作る。前に開いたときのスクロール位置を持ち越さず、必ず一番上から出る
+  // （iPhone の Safari では、開いてから一番上へ戻す命令が遅れて効き、下まで開いて戻るように見えた）
+  const box = document.createElement("div");
+  box.className = "dlg-scroll";
+  box.id = "dlg-scroll";
+  box.innerHTML = detailHTML(e);
+  $("dlg-scroll").replaceWith(box);
   const d = $("detail");
   if (!d.open) {
     d.showModal();
     if (push) { history.pushState({ dlg: id }, ""); dlgPushed = true; }
   }
-  // 開いたら一番上から。フォーカスは中身へ（スクロールさせない。閉じるボタンに枠を出さない）
-  $("dlg-body").focus({ preventScroll: true });
-  d.scrollTop = 0;
-  requestAnimationFrame(() => { d.scrollTop = 0; });
 }
 
 /* ---------- タイムテーブル ---------- */
@@ -218,14 +220,24 @@ function renderGrid(items, from, to) {
       const st = liveState(it, now, state.ttDay);
       const lane = n > 1 ? `left:calc(${(100 / n) * it.lane}% + 4px);right:auto;width:calc(${100 / n}% - 8px);` : "";
       const lu = it.lineup.length && !short;
-      html += `<button type="button" class="blk ${short ? "short" : ""} ${lu ? "has-lu" : ""} ${st}" data-id="${esc(it.e.id)}" style="top:${(it.start - from) * pxPerMin}px;height:${Math.max(20, (it.end - it.start) * pxPerMin - 2)}px;${lane}">`
-        + `<span class="t tnum">${short ? fmt(it.start) : `${fmt(it.start)}〜${fmt(it.end)}`}</span><span class="n">${esc(label)}${short ? "" : mustTag(it.e)}</span>`
-        + (!short && it.sub ? `<span class="s">${esc(it.sub)}</span>` : "")
-        + (lu ? it.lineup.map((b) => {
+      const h = Math.max(20, (it.end - it.start) * pxPerMin - 2);
+      let inner;
+      if (lu) {
+        // 出演順は、それぞれの開始時刻の高さに置く（左の目盛りとそろい、枠の下まで使う）。上の題名と重なる分だけ下へ送る
+        const tops = [];
+        let next = 24;
+        for (const b of it.lineup) { const t = Math.max((b.startMin - it.start) * pxPerMin, next); tops.push(t); next = t + 18; }
+        inner = `<span class="lu-title">${esc(label)}</span>` + it.lineup.map((b, i) => {
           const bs = now.key !== state.ttDay ? "" : b.endMin <= now.min ? "done" : b.startMin <= now.min ? "on" : "";
-          return `<span class="lu ${bs}"><span class="tnum">${fmt(b.startMin)}</span> ${esc(b.name)}</span>`;
-        }).join("") : "")
-        + `</button>`;
+          const bottom = i + 1 < tops.length ? tops[i + 1] : h;
+          return `<span class="lu ${bs}" style="top:${tops[i]}px;height:${bottom - tops[i]}px"><span class="tnum">${fmt(b.startMin)}</span> ${esc(b.name)}</span>`;
+        }).join("");
+      } else {
+        inner = `<span class="t tnum">${short ? fmt(it.start) : `${fmt(it.start)}〜${fmt(it.end)}`}</span><span class="n">${esc(label)}${short ? "" : mustTag(it.e)}</span>`
+          + (!short && it.sub ? `<span class="s">${esc(it.sub)}</span>` : "")
+          + (!short && it.e.organizer ? `<span class="o">${esc(it.e.organizer.name)}</span>` : "");
+      }
+      html += `<button type="button" class="blk ${short ? "short" : ""} ${lu ? "has-lu" : ""} ${st}" data-id="${esc(it.e.id)}" style="top:${(it.start - from) * pxPerMin}px;height:${h}px;${lane}">${inner}</button>`;
     }
     html += `</div></div>`;
   }
@@ -244,6 +256,10 @@ function updateHint() {
   const heads = $("tt-heads").children;
   $("tt").querySelectorAll(".tt-col:not(.axis)").forEach((c, i) => { if (heads[i]) heads[i].style.width = `${c.getBoundingClientRect().width}px`; });
   syncHeads();
+  // 枠に収まらないときは、薄い団体名を省く
+  for (const o of $("tt").querySelectorAll(".blk .o")) {
+    if (o.getBoundingClientRect().bottom > o.parentElement.getBoundingClientRect().bottom - 4) o.remove();
+  }
 }
 function syncHeads() {
   $("tt-heads").style.transform = `translateX(${-$("tt-wrap").scrollLeft}px)`;
