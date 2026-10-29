@@ -209,7 +209,7 @@ h2.sec small { font-size: 14px; font-weight: 600; color: var(--sub); margin-left
 .blk.past { opacity: .45; }
 .blk.live { background: var(--live-bg); border-left-color: var(--live); }
 .blk > .t, .blk > .n, .blk > .s, .blk > .o { flex-shrink: 0; } /* 押しつぶさない（入りきらない団体名は JS で省く） */
-.blk .o { color: var(--sub); font-size: 12px; opacity: .85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.blk .o { color: var(--sub); font-size: 12px; line-height: 1.35; opacity: .85; }
 .blk.has-lu { padding: 0; }
 .blk .lu-title { position: absolute; top: 4px; left: 8px; right: 6px; font-weight: 700; font-size: 13px; line-height: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .blk .lu {
