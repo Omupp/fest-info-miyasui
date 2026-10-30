@@ -11,15 +11,18 @@
   --sub: #6c6c70;
   --chev: #b4b4b9;
   --sep: #dcdce1;
-  --accent: #0066d6;
-  --accent-bg: #e3edfb;
+  --accent: #c42f1b;
+  --accent-bg: #fbe7e3;
   --on-accent: #fff;
-  --must: #d70015;
-  --must-bg: #fdecee;
+  --must: #9a5800;
+  --must-bg: #fff0d6;
   --live: #1a7f37;
   --live-bg: #e1f4e6;
-  --block: #e7effc;
-  --block-edge: #0066d6;
+  --block: #fbefec;
+  --block-edge: #e23924;
+  --brand: #e23924;   /* 学部（iTL）のロゴの朱 */
+  --brand-white: #e9e6e3;
+  --brand-black: #000;
   --r-card: 14px;
   --r-ctl: 10px;
   --hour: 96px;
@@ -39,15 +42,15 @@
     --sub: #a1a1a6;
     --chev: #5a5a5e;
     --sep: #38383a;
-    --accent: #4da3ff;
-    --accent-bg: #172b45;
-    --on-accent: #001a33;
-    --must: #ff6961;
-    --must-bg: #3b1518;
+    --accent: #ff6a52;
+    --accent-bg: #3a1813;
+    --on-accent: #1a0503;
+    --must: #ffb547;
+    --must-bg: #3a2a0f;
     --live: #4cd471;
     --live-bg: #12301c;
-    --block: #1c2a3e;
-    --block-edge: #4da3ff;
+    --block: #2a1d1b;
+    --block-edge: #e23924;
   }
 }
 
@@ -77,13 +80,28 @@ a, button, summary { -webkit-tap-highlight-color: transparent; }
 .tag.only { color: var(--accent); background: var(--accent-bg); }
 
 /* 見出し */
-header.site { padding: 32px 4px 10px; }
-.eyebrow { margin: 0 0 8px; font-size: 13px; font-weight: 700; color: var(--sub); }
-.eyebrow .sepbar { margin: 0 6px; color: var(--chev); }
-header.site h1 { margin: 0; font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -.01em; }
+/* 見出し：学部のロゴと同じ黒い板に、朱と白の破片。明るい表示でも暗い表示でも同じ */
+header.site {
+  position: relative; overflow: hidden;
+  margin: 16px 0 6px; padding: 18px 16px 44px; /* 下の帯に破片（文字に重ならない） */
+  background: var(--brand-black); color: var(--brand-white); border-radius: 16px;
+}
+@media (prefers-color-scheme: dark) { header.site { outline: 1px solid #262626; outline-offset: -1px; } }
+header.site > :not(.shard) { position: relative; z-index: 1; }
+.shard { position: absolute; display: block; border-radius: 2px; }
+.shard.s1 { width: 40px; height: 11px; bottom: 12px; right: 36%; background: var(--brand-white); transform: rotate(-20deg); }
+.shard.s2 { width: 50px; height: 14px; bottom: 9px; right: 78px; background: var(--brand); transform: rotate(26deg); }
+.shard.s3 { width: 96px; height: 28px; bottom: -12px; right: -20px; background: var(--brand); transform: rotate(-34deg); }
+.shard.s4 { width: 10px; height: 28px; bottom: -6px; left: 30%; background: var(--brand-white); transform: rotate(32deg); }
+.shard.s5 { width: 24px; height: 8px; bottom: 14px; left: 16px; background: var(--brand); transform: rotate(16deg); }
+.eyebrow { margin: 0 0 8px; font-size: 13px; font-weight: 700; color: #b9b4b0; }
+.eyebrow a { color: #ff7a63; white-space: nowrap; }
+.eyebrow .sepbar { margin: 0 6px; color: #5c5855; }
+header.site h1 { margin: 0; font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -.01em; color: var(--brand-white); }
+.brand-i { color: var(--brand); }
 .site-sub { margin: 6px 0 0; font-size: 15px; line-height: 1.5; }
 .site-sub .when { font-weight: 700; }
-.site-sub .where { display: block; color: var(--sub); }
+.site-sub .where { display: block; color: #a8a39f; }
 .nw { white-space: nowrap; }
 
 /* 上に貼りつく切り替え */
