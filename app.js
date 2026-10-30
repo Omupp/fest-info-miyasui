@@ -59,13 +59,15 @@ function detailHTML(e) {
     ${img ? `<div class="ev-img"><img src="${esc(img)}" alt="${esc(e.title)}のポスター" width="960" height="540"></div>` : ""}
     <h3>${esc(e.title)}</h3>
     ${e.organizer ? `<p class="org">${esc(e.organizer.name)}</p>` : ""}
-    ${mustLabel(e) ? `<p class="must-line">${mustTag(e)}<span class="must-how">予約のしかたは公式の${officialLinks()}でご確認ください</span></p>` : ""}
+    ${e.reserve ? `<p class="must-line">${mustTag(e)}<a class="reserve" href="${esc(safeUrl(e.reserve.url))}" target="_blank" rel="noopener">${esc(e.reserve.label)}</a><span class="must-how">${esc(e.reserve.note || "")}</span></p>`
+      : mustLabel(e) ? `<p class="must-line">${mustTag(e)}<span class="must-how">予約のしかたは公式の${officialLinks()}でご確認ください</span></p>` : ""}
     <dl><dt>日時</dt><dd>${esc(when(e))}</dd><dt>場所</dt><dd>${esc(place(e))}</dd></dl>
     ${e.description ? `<p class="desc">${esc(e.description)}</p>` : ""}
     ${lineupHTML(e)}
+    ${menuHTML(e)}
     ${e.notes.length ? `<ul class="notes">${e.notes.map((n) => `<li><span class="from">${esc(n.from)}より</span>${esc(n.text)}</li>`).join("")}</ul>` : ""}
     ${cond ? `<p class="conds">${esc(cond)}</p>` : ""}
-    <p class="src"><a href="${esc(safeUrl(e.url))}" target="_blank" rel="noopener">学祭ポータルで見る</a></p>
+    <p class="src"><a href="${esc(safeUrl(e.url))}" target="_blank" rel="noopener">${e.from === "公式パンフ" ? "公式パンフ（PDF）で見る" : "学祭ポータルで見る"}</a></p>
   </article>`;
 }
 
@@ -91,6 +93,13 @@ function lineupHTML(e) {
 }
 
 let dlgPushed = false; // 詳細を開いたときに履歴を 1 つ積んだか（戻るで詳細だけを閉じるため）
+// 食品販売のメニュー（公式パンフ）
+function menuHTML(e) {
+  if (!e.menu) return "";
+  return `<h4 class="lu-head">メニュー<small>公式パンフより</small></h4>` + Object.entries(e.menu).map(([kind, items]) =>
+    `<ul class="menu" aria-label="${esc(kind)}"><li class="menu-kind">${esc(kind)}</li>${items.map(([n, yen]) => `<li><span>${esc(n)}</span><span class="tnum">${esc(yen)}円</span></li>`).join("")}</ul>`).join("");
+}
+
 function openDetail(id, push = true) {
   const e = BY_ID.get(id);
   if (!e) return;
@@ -303,7 +312,7 @@ function renderAllday(day) {
     <ul class="dir-list" aria-label="${f === 99 ? "その他" : `${f}階`}">${floors.get(f).map((e) => {
       // 時刻の入った注記を 1 文だけ（終日と同じ「10:00〜17:00」は書かない）
       const note = e.notes.flatMap((n) => n.text.split("。")).find((t) => /\d:\d\d/.test(t) && t.trim() !== full);
-      const num = /^(\d+)教室$/.exec(e.room); // 「401教室」は右に番号だけ。それ以外の場所は名前の下に
+      const num = /^([\d・]+)教室$/.exec(e.room); // 「401教室」は右に番号だけ。それ以外の場所は名前の下に
       return `<li><button type="button" class="dir-row" data-id="${esc(e.id)}">
         <span class="r-main">
           <span class="r-title">${esc(e.title)}${dayTag(e)}${mustTag(e)}</span>
@@ -332,12 +341,12 @@ function pamphRow(e) {
 
 // ジャンルで絞る（学祭ポータルのタグから。どの企画もどれかに入る）
 const GENRES = [
-  ["飲食", ["飲食"]],
+  ["飲食・物販", ["飲食", "物販"]],
   ["ステージ", ["ステージ・公演"]],
   ["講演", ["講演", "学術・研究発表"]],
   ["イベント", ["アトラクション", "大会・コンテスト"]],
   ["体験", ["体験・ワークショップ"]],
-  ["展示", ["展示", "物販"]],
+  ["展示", ["展示"]],
 ];
 const inGenre = (e, g) => g === "all" || GENRES.find(([name]) => name === g)[1].some((t) => e.tags.includes(t));
 
@@ -357,9 +366,17 @@ function renderPamph() {
   const name = (f) => (f === 99 ? "その他" : `${f}階`);
   $("floors").innerHTML = keys.map((f) => `<section class="floor" id="f-${f}">
     <h2 class="sec">${name(f)}<small>${floors.get(f).length}件</small></h2>
+    ${floorInfo(f)}
     <ul class="rows">${floors.get(f).map(pamphRow).join("")}</ul>
   </section>`).join("");
   $("empty").hidden = list.length > 0;
+}
+
+// 階の飾りのテーマとトイレ（公式パンフ「フロア案内」）
+function floorInfo(f) {
+  const x = (FEST.floors || {})[f];
+  if (!x) return "";
+  return `<p class="floor-info">${x.theme ? `<span>${esc(x.theme)}</span>` : ""}<span>トイレ：${esc(x.toilet)}</span></p>`;
 }
 
 function renderInfo() {
@@ -367,11 +384,14 @@ function renderInfo() {
     ["日時", `${FEST.days.map((d) => d.label).join("・")} ${FEST.open}〜${FEST.close}`],
     ["会場", `${FEST.campus}（${FEST.address}）`],
     ["テーマ", FEST.theme],
-    ["注意", FEST.closed_floors],
+    ["入れない階", FEST.closed_floors],
+    ["行き方", FEST.access],
     ["予約", FEST.reserve_note],
+    ["注意", FEST.rules],
+    ["AED", FEST.aed],
   ];
   $("info").innerHTML = rows.map(([k, v]) => `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`).join("")
-    + `<tr><th>行き方</th><td><a href="${esc(safeUrl(FEST.access_url))}" target="_blank" rel="noopener">公式サイトの「アクセス」</a></td></tr>`
+    + `<tr><th>パンフ</th><td><a href="${esc(safeUrl(FEST.pamphlet_url))}" target="_blank" rel="noopener">公式パンフレット（PDF）</a>・<a href="${esc(safeUrl(FEST.access_url))}" target="_blank" rel="noopener">公式サイトの「アクセス」</a></td></tr>`
     + `<tr><th>公式</th><td>${FEST.links.map((l) => `<a href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join("・")}</td></tr>`;
 }
 
@@ -441,9 +461,12 @@ async function main() {
   const [fest, extra] = await Promise.all(["data/fest.json", "data/extra.json"].map(getJSON));
   FEST = extra.festival;
   ORGS = fest.organizers;
-  EVENTS = fest.events.map((e) => {
-    const x = extra.events[e.id] || {};
-    const notes = x.notes || [];
+  const added = (extra.added_events || []).filter((a) => !fest.events.some((e) => e.id === a.id));
+  EVENTS = [...fest.events, ...added].map((e0) => {
+    const x = extra.events[e0.id] || {};
+    // 学祭ポータルで教室が「未定」のときだけ、公式パンフの教室で補う（ポータルが埋めたらそちらを使う）
+    const e = x.room && /未定/.test(e0.room) ? { ...e0, room: x.room } : e0;
+    const notes = [...(e.notes || []), ...(x.notes || [])];
     const sess = x.sessions || [];
     const lineup = (x.lineup || []).map((b, i, arr) => {
       const start = toMin(b.start);
@@ -458,11 +481,15 @@ async function main() {
       extraSessions: sess,
       lineup,
       lineupFrom: x.lineup_from,
+      reserve: x.reserve || null,
+      menu: x.menu || null,
       replaceAllday: !!x.replace_allday,
       haystack: norm([e.title, e.organizer?.name, e.description, place(e), e.tags.join(" "), notes.map((n) => n.text).join(" "), lineup.map((b) => b.name).join(" ")].join(" ")),
     };
   });
   BY_ID = new Map(EVENTS.map((e) => [e.id, e]));
+  for (const o of ORGS) o.links = [...o.links, ...((extra.organizer_links || {})[o.id] || [])];
+  for (const e of added) if (e.organizer && !ORGS.some((o) => o.id === e.organizer.id)) ORGS.push({ ...e.organizer, description: "", links: [] });
 
   const now = jstNow();
   state.ttDay = FEST.days.some((d) => d.key === now.key) ? now.key : FEST.days[0].key;
@@ -470,7 +497,7 @@ async function main() {
   $("site-sub").innerHTML = `<span class="when">${esc(FEST.days.map((d) => d.label).join("・"))} <span class="nw">${esc(FEST.open)}〜${esc(FEST.close)}</span></span><span class="where">${esc(FEST.campus)}</span>`;
   const upd = fest.updated_at ? fest.updated_at.replace(/^\d{4}-(\d\d)-(\d\d)T(\d\d:\d\d).*/, (_, m, d, t) => `${+m}/${+d} ${t}`) : "";
   $("foot").innerHTML = `<p>非公式のまとめです。最新の情報は<a href="https://itlfest.com/" target="_blank" rel="noopener">公式サイト</a>でご確認ください。</p>
-    <p>企画の情報は<a href="${esc(safeUrl(fest.source))}" target="_blank" rel="noopener">学祭ポータル</a>（C3 | Creative Computing Club）から。画像と文章は iTLFest.実行委員会と各団体のものです。時刻の一部はポスターと公式サイトから補いました。</p>
+    <p>企画の情報は<a href="${esc(safeUrl(fest.source))}" target="_blank" rel="noopener">学祭ポータル</a>（C3 | Creative Computing Club）から。画像と文章は iTLFest.実行委員会と各団体のものです。時刻・教室・予約・メニューなどの一部は、公式パンフ・ポスター・公式サイトから補いました。</p>
     ${upd ? `<p>学祭ポータルの内容が最後に変わったのは ${esc(upd)} です（1 時間ごとに確かめています）。</p>` : ""}
     ${sourcesHTML()}`;
 

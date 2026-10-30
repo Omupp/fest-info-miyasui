@@ -346,6 +346,13 @@ dialog::backdrop { background: rgba(0, 0, 0, .4); }
 .lineup li.brk { color: var(--sub); }
 .ev .conds { margin: 14px 0 0; font-size: 14px; color: var(--sub); }
 .ev .src { margin: 8px 0 0; font-size: 15px; }
+.ev .reserve { display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px; border-radius: 10px; background: var(--accent); color: var(--on-accent); font-weight: 700; font-size: 15px; }
+.ev .reserve:hover { text-decoration: none; filter: brightness(1.05); }
+.menu { list-style: none; margin: 8px 0 0; padding: 0; background: var(--fill-2); border-radius: 12px; overflow: hidden; }
+.menu li { display: flex; justify-content: space-between; gap: 12px; padding: 8px 14px; }
+.menu li + li { border-top: 1px solid var(--sep); }
+.menu .menu-kind { font-weight: 700; color: var(--sub); font-size: 14px; }
+.floor-info { margin: -4px 4px 8px; font-size: 13px; color: var(--sub); display: flex; flex-wrap: wrap; gap: 2px 12px; }
 
 @media (max-width: 360px) {
   .seg > a, .seg > button { font-size: 14px; }
