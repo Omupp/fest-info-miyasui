@@ -316,6 +316,23 @@ dialog::backdrop { background: rgba(0, 0, 0, .4); }
   display: flex; justify-content: flex-end; align-items: center;
   padding: 6px 8px; background: var(--card);
 }
+.pv-bar { justify-content: space-between; gap: 8px; }
+.pv-bar select { min-width: 0; max-width: 70%; min-height: 40px; padding: 0 10px; border: 0; border-radius: 10px; background: var(--fill); color: var(--fg); font: inherit; font-size: 15px; font-weight: 600; }
+#pamph-view { width: min(760px, calc(100vw - 16px)); }
+@media (max-width: 759px) { #pamph-view { max-height: 96dvh; } }
+.pv-scroll { padding: 0 10px 24px; }
+.pv-note { margin: 0 4px 10px; font-size: 13px; color: var(--sub); }
+.pv-page { margin: 0 0 14px; }
+.pv-page img { display: block; width: 100%; height: auto; aspect-ratio: 1100 / 1570; border-radius: 8px; background: var(--fill); }
+.pv-page figcaption { margin-top: 4px; text-align: center; font-size: 12px; color: var(--sub); }
+.pv-entry {
+  display: flex; align-items: center; gap: 12px; width: 100%; margin-top: 14px; padding: 12px 12px 12px 14px;
+  border: 0; border-radius: var(--r-card); background: var(--card); color: inherit; text-align: left; cursor: pointer;
+}
+.pv-entry:active { background: var(--press); }
+.pv-entry img { flex: 0 0 auto; width: 52px; height: auto; aspect-ratio: 1100 / 1570; border-radius: 6px; background: var(--fill); }
+.pv-link { padding: 4px 0; border: 0; background: none; color: var(--accent); font: inherit; font-size: inherit; font-weight: 600; cursor: pointer; }
+.ev .src .pv-link { margin-right: 16px; }
 .dlg-bar button { min-height: var(--tap); padding: 0 12px; border: 0; background: none; color: var(--accent); font-size: 17px; font-weight: 700; cursor: pointer; }
 .dlg-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 0 16px 24px; }
 .ev-img img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 12px; background: var(--fill); }

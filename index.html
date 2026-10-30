@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="style.css?v=39">
+<link rel="stylesheet" href="style.css?v=42">
 </head>
 <body>
 <header class="site">
@@ -43,6 +43,11 @@
   </section>
 
   <section id="view-pamph" hidden>
+    <button type="button" class="pv-entry" data-pamph="1">
+      <img src="img/pamph/p01.webp" alt="" width="1100" height="1570">
+      <span class="r-main"><span class="r-title">公式パンフレットを見る</span><span class="r-meta">iTLFest.実行委員会・26 ページ・フロア案内やメニューも</span></span>
+      <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+    </button>
     <div class="seg" role="group" aria-label="日付" id="pf-days"></div>
     <label class="search">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
@@ -65,6 +70,14 @@
   <div class="dlg-scroll" id="dlg-scroll"></div>
 </dialog>
 
-<script src="app.js?v=39"></script>
+<dialog id="pamph-view" aria-label="公式パンフレット">
+  <div class="dlg-bar pv-bar">
+    <select id="pv-jump" aria-label="ページへ移動"></select>
+    <button type="button" id="pv-close">閉じる</button>
+  </div>
+  <div class="dlg-scroll pv-scroll" id="pv-scroll"></div>
+</dialog>
+
+<script src="app.js?v=42"></script>
 </body>
 </html>

@@ -67,7 +67,7 @@ function detailHTML(e) {
     ${menuHTML(e)}
     ${e.notes.length ? `<ul class="notes">${e.notes.map((n) => `<li><span class="from">${esc(n.from)}より</span>${esc(n.text)}</li>`).join("")}</ul>` : ""}
     ${cond ? `<p class="conds">${esc(cond)}</p>` : ""}
-    <p class="src"><a href="${esc(safeUrl(e.url))}" target="_blank" rel="noopener">${e.from === "公式パンフ" ? "公式パンフ（PDF）で見る" : "学祭ポータルで見る"}</a></p>
+    <p class="src">${pamphPageOf(e) ? `<button type="button" class="pv-link" data-pamph="${pamphPageOf(e)}">公式パンフで見る（${pamphLabel(pamphPageOf(e))}）</button>` : ""}${e.from === "公式パンフ" ? "" : `<a href="${esc(safeUrl(e.url))}" target="_blank" rel="noopener">学祭ポータルで見る</a>`}</p>
   </article>`;
 }
 
@@ -92,7 +92,17 @@ function lineupHTML(e) {
   }).join("");
 }
 
-let dlgPushed = false; // 詳細を開いたときに履歴を 1 つ積んだか（戻るで詳細だけを閉じるため）
+// 窓（詳細・公式パンフ）を開いたときに履歴を 1 つ積む。戻る（スワイプ）で窓だけを閉じるため
+let overlayPushed = false;
+function pushOverlay() {
+  if (!overlayPushed) { history.pushState({ overlay: 1 }, ""); overlayPushed = true; }
+}
+// 履歴を戻さずに閉じる（戻るで閉じたとき・窓を切り替えるとき）
+function quietClose(d) {
+  if (!d.open) return;
+  d.dataset.quiet = "1";
+  d.close();
+}
 // 食品販売のメニュー（公式パンフ）
 function menuHTML(e) {
   if (!e.menu) return "";
@@ -112,9 +122,51 @@ function openDetail(id, push = true) {
   $("dlg-scroll").replaceWith(box);
   const d = $("detail");
   if (!d.open) {
+    if (push) pushOverlay();
     d.showModal();
-    if (push) { history.pushState({ dlg: id }, ""); dlgPushed = true; }
   }
+}
+
+/* ---------- 公式パンフ（PDF を 1 ページずつの画像にしたもの） ---------- */
+
+const PV = () => FEST.pamphlet;
+// 印刷されたページ番号（表紙・裏表紙は番号なし。目次が p.1）
+function pamphLabel(n) {
+  return n === 1 ? "表紙" : n === PV().pages ? "裏表紙" : `p.${n - 1}`;
+}
+function pamphPageOf(e) {
+  return PV().event_pages[e.id] || PV().floor_pages[String(e.floor)] || 0;
+}
+
+function buildPamph() {
+  const pv = PV();
+  const nn = (n) => String(n).padStart(2, "0");
+  $("pv-jump").innerHTML = pv.sections.map(([name, n]) => `<option value="${n}">${esc(name)}${name === pamphLabel(n) ? "" : `（${pamphLabel(n)}）`}</option>`).join("");
+  $("pv-scroll").innerHTML = `<p class="pv-note">iTLFest.実行委員会の公式パンフレット（${esc(pv.published)} 公開）です。原本の PDF（約 140MB）は<a href="${esc(safeUrl(FEST.pamphlet_url))}" target="_blank" rel="noopener">公式サイト</a>にあります。</p>`
+    + Array.from({ length: pv.pages }, (_, i) => i + 1).map((n) => `<figure class="pv-page" id="pv-${n}">
+      <img src="${esc(pv.src.replace("{nn}", nn(n)))}" alt="公式パンフ ${pamphLabel(n)}" loading="lazy" width="${pv.width}" height="${pv.height}">
+      <figcaption>${pamphLabel(n)}</figcaption></figure>`).join("");
+  // 見ているページを「ページへ移動」の欄に出す
+  const io = new IntersectionObserver((ents) => {
+    for (const en of ents) if (en.isIntersecting) {
+      const n = +en.target.id.slice(3);
+      const opt = [...$("pv-jump").options].reverse().find((o) => +o.value <= n);
+      if (opt) $("pv-jump").value = opt.value;
+    }
+  }, { root: $("pv-scroll"), rootMargin: "0px 0px -70% 0px" });
+  $("pv-scroll").querySelectorAll(".pv-page").forEach((f) => io.observe(f));
+}
+
+function showPamphPage(n) {
+  const f = $(`pv-${n}`), s = $("pv-scroll");
+  if (f) s.scrollTop += f.getBoundingClientRect().top - s.getBoundingClientRect().top - 8;
+}
+
+function openPamph(n = 1) {
+  const v = $("pamph-view");
+  quietClose($("detail")); // 詳細から来たときは、詳細を閉じて同じ履歴のまま切り替える
+  if (!v.open) { pushOverlay(); v.showModal(); }
+  showPamphPage(n);
 }
 
 /* ---------- タイムテーブル ---------- */
@@ -376,7 +428,8 @@ function renderPamph() {
 function floorInfo(f) {
   const x = (FEST.floors || {})[f];
   if (!x) return "";
-  return `<p class="floor-info">${x.theme ? `<span>${esc(x.theme)}</span>` : ""}<span>トイレ：${esc(x.toilet)}</span></p>`;
+  const pg = PV().floor_pages[String(f)];
+  return `<p class="floor-info">${x.theme ? `<span>${esc(x.theme)}</span>` : ""}<span>トイレ：${esc(x.toilet)}</span>${pg ? `<button type="button" class="pv-link" data-pamph="${pg}">公式パンフ ${pamphLabel(pg)}</button>` : ""}</p>`;
 }
 
 function renderInfo() {
@@ -391,7 +444,7 @@ function renderInfo() {
     ["AED", FEST.aed],
   ];
   $("info").innerHTML = rows.map(([k, v]) => `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`).join("")
-    + `<tr><th>パンフ</th><td><a href="${esc(safeUrl(FEST.pamphlet_url))}" target="_blank" rel="noopener">公式パンフレット（PDF）</a>・<a href="${esc(safeUrl(FEST.access_url))}" target="_blank" rel="noopener">公式サイトの「アクセス」</a></td></tr>`
+    + `<tr><th>パンフ</th><td><button type="button" class="pv-link" data-pamph="1">公式パンフレットを見る</button>・<a href="${esc(safeUrl(FEST.pamphlet_url))}" target="_blank" rel="noopener">原本の PDF</a>・<a href="${esc(safeUrl(FEST.access_url))}" target="_blank" rel="noopener">公式サイトの「アクセス」</a></td></tr>`
     + `<tr><th>公式</th><td>${FEST.links.map((l) => `<a href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join("・")}</td></tr>`;
 }
 
@@ -429,7 +482,9 @@ function renderDays(el, opts, cur, onPick) {
 
 let curTab = null;
 function route() {
-  if ($("detail").open) { dlgPushed = false; $("detail").close(); }
+  overlayPushed = false;
+  quietClose($("detail"));
+  quietClose($("pamph-view"));
   const h = location.hash;
   const tab = h === "#pamph" || h.startsWith("#e-") ? "pamph" : "time";
   // タブを切り替えたら一番上から（前のタブの途中の位置のまま開かない）
@@ -502,6 +557,7 @@ async function main() {
     ${sourcesHTML()}`;
 
   renderInfo();
+  buildPamph();
   renderTime();
   renderPamph();
   renderOrgs();
@@ -512,18 +568,30 @@ async function main() {
   $("tt-wrap").addEventListener("scroll", syncHeads, { passive: true });
   $("q").addEventListener("input", (ev) => { state.q = ev.target.value; renderPamph(); });
   document.addEventListener("click", (ev) => {
+    const pv = ev.target.closest("[data-pamph]");
+    if (pv) { ev.preventDefault(); openPamph(+pv.dataset.pamph); return; }
     const t = ev.target.closest("[data-id]");
     if (!t || t.closest("dialog")) return;
     ev.preventDefault();
     openDetail(t.dataset.id);
   });
   $("dlg-close").onclick = () => $("detail").close();
-  $("detail").addEventListener("click", (ev) => { if (ev.target === ev.currentTarget) ev.currentTarget.close(); });
-  $("detail").addEventListener("close", () => {
-    if (dlgPushed) { dlgPushed = false; history.back(); return; } // 閉じるボタン：積んだ履歴を戻す
-    if (!$("detail").open && location.hash.startsWith("#e-")) history.replaceState(null, "", "#pamph");
+  for (const d of [$("detail"), $("pamph-view")]) {
+    d.addEventListener("click", (ev) => { if (ev.target === ev.currentTarget) ev.currentTarget.close(); });
+    d.addEventListener("close", () => {
+      if (d.dataset.quiet) { delete d.dataset.quiet; return; }
+      if (document.querySelector("dialog[open]")) return; // まだ別の窓が開いている
+      if (overlayPushed) { overlayPushed = false; history.back(); return; } // 閉じるボタン：積んだ履歴を戻す
+      if (location.hash.startsWith("#e-")) history.replaceState(null, "", "#pamph");
+    });
+  }
+  window.addEventListener("popstate", () => {
+    if (!overlayPushed) return;
+    overlayPushed = false;
+    document.querySelectorAll("dialog[open]").forEach(quietClose);
   });
-  window.addEventListener("popstate", () => { if (dlgPushed && $("detail").open) { dlgPushed = false; $("detail").close(); } });
+  $("pv-close").onclick = () => $("pamph-view").close();
+  $("pv-jump").addEventListener("change", (ev) => showPamphPage(+ev.target.value));
   setInterval(() => {
     if ($("view-time").hidden) return;
     // 「いま」の箱の高さが変わっても、その下を読んでいる人の位置がずれないように
