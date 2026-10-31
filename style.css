@@ -7,6 +7,8 @@
   --press: #e5e5ea;
   --floor-bg: #e9e9ee;
   --rib: #e8e8ed;
+  --allday-bg: #e8eef6;
+  --allday-edge: #8ea2bc;
   --seg-on: #fff;
   --fg: #111;
   --sub: #6c6c70;
@@ -39,6 +41,8 @@
     --press: #2c2c2e;
     --floor-bg: #2c2c2e;
     --rib: #2f2f33;
+    --allday-bg: #1e2733;
+    --allday-edge: #6f87a5;
     --seg-on: #636366;
     --fg: #f2f2f7;
     --sub: #a1a1a6;
@@ -206,8 +210,9 @@ h2.sec small { font-size: 14px; font-weight: 600; color: var(--sub); margin-left
 .tl-hour.first { transform: translateX(4px); }
 .tl-hour.last { transform: translateX(calc(-100% - 4px)); }
 .tl { position: relative; }
-.tl-floor { display: flex; height: 30px; align-items: center; background: var(--fill-2); border-bottom: 1px solid var(--sep); }
-.tl-floor span { position: sticky; left: 0; padding: 0 12px; font-size: 14px; font-weight: 800; }
+.tl-floor { display: flex; height: 32px; align-items: flex-end; background: var(--card); border-bottom: 1px solid var(--sep); }
+.tl-floor span { position: sticky; left: 0; padding: 0 12px 5px; font-size: 15px; font-weight: 800; }
+.tl-floor:not(:first-child) { border-top: 1px solid var(--chev); }
 .tl-row { display: flex; border-bottom: 1px solid var(--sep); }
 .tl-label {
   position: sticky; left: 0; z-index: 3; flex: 0 0 84px; width: 84px;
@@ -219,7 +224,7 @@ h2.sec small { font-size: 14px; font-weight: 600; color: var(--sub); margin-left
 .tlb {
   /* はみ出しは clip-path で隠す（overflow:hidden だと中の名前が左に付いてこない） */
   position: absolute; height: 40px; clip-path: inset(0 round 8px); cursor: pointer;
-  border-radius: 8px; background: var(--block); border-left: 3px solid var(--block-edge);
+  border-radius: 8px; background: var(--block); border-left: 4px solid var(--block-edge);
   -webkit-tap-highlight-color: transparent;
 }
 .tlb:active { filter: brightness(.96); }
@@ -229,9 +234,9 @@ h2.sec small { font-size: 14px; font-weight: 600; color: var(--sub); margin-left
 .tlb .m { display: block; overflow: hidden; text-overflow: ellipsis; font-size: 12px; line-height: 16px; color: var(--sub); }
 .tlb.narrow .in { padding: 0 3px; }
 .tlb.narrow .n { line-height: 40px; font-size: 11px; text-overflow: clip; }
-.tlb.allday { background: var(--rib); border-left-color: var(--chev); }
+.tlb.allday { background: var(--allday-bg); border-left-color: var(--allday-edge); } /* 終日は淡い青みのグレー（朱の帯と階の見出しから離す） */
 .tlb.past { opacity: .45; }
-.tlb.live { background: var(--live-bg); border-left-color: var(--live); }
+.tlb.live { outline: 2px solid var(--live); outline-offset: -2px; } /* 開催中は緑の枠（帯の色は変えない） */
 .tl-now { position: absolute; top: 0; bottom: 0; width: 0; border-left: 2px solid var(--live); z-index: 2; pointer-events: none; }
 
 /* パンフ */
