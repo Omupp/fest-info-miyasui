@@ -267,16 +267,36 @@ function renderGrid(items, from, to) {
   const height = (to - from) * pxPerMin;
   const now = jstNow();
   const cols = new Map();
+  const fl = (f) => String(f ?? 99).padStart(2, "0");
   for (const it of items) {
-    const k = `${String(it.e.floor ?? 99).padStart(2, "0")}|${it.e.room}`;
+    const k = `${fl(it.e.floor)}|1|${it.e.room}`;
     if (!cols.has(k)) cols.set(k, { floor: it.e.floor, room: it.e.room, items: [] });
     cols.get(k).items.push(it);
+  }
+  // 終日の企画は、階ごとの細い列に縦書きの帯で（その階の時間が決まっている教室の左に置く）
+  for (const e of alldayItems(state.ttDay)) {
+    const k = `${fl(e.floor)}|0|`;
+    if (!cols.has(k)) cols.set(k, { floor: e.floor, allday: [] });
+    cols.get(k).allday.push(e);
   }
   let html = `<div class="tt-col axis"><div class="tt-body" style="height:${height}px">`;
   let heads = "";
   for (let m = from; m <= to; m += 60) html += `<span class="hour tnum" style="top:${(m - from) * pxPerMin}px">${m / 60}:00</span>`;
   html += `</div></div>`;
   for (const [, c] of [...cols.entries()].sort((a, b) => a[0].localeCompare(b[0], "ja"))) {
+    if (c.allday) {
+      const top = (toMin(FEST.open) - from) * pxPerMin, h = (toMin(FEST.close) - toMin(FEST.open)) * pxPerMin - 2;
+      heads += `<div class="tt-head">${c.floor ? `<span>${c.floor}階</span>` : ""}<b>終日</b></div>`;
+      const w = Math.max(48, c.allday.length * 30 + 8), x0 = (w - (c.allday.length * 30 - 4)) / 2; // 帯は列の真ん中に
+      html += `<div class="tt-col dayc" style="flex-basis:${w}px;min-width:${w}px" role="group" aria-label="${c.floor ? `${c.floor}階の` : ""}終日の企画"><div class="tt-body" style="height:${height}px">`
+        + c.allday.map((e, i) => {
+          const room = /^[\d・]+教室$/.test(e.room) ? e.room.replace(/教室$/, "") : e.room;
+          return `<button type="button" class="rib" data-id="${esc(e.id)}" style="left:${x0 + i * 30}px;top:${top}px;height:${h}px" aria-label="${esc(e.title)}（${esc(place(e))}・終日）">`
+            + `<span class="rib-in"><b>${esc(e.title.replace(/^iTLFest\.\s*/, ""))}</b><span class="rib-room">${esc(room)}</span>${mustLabel(e) ? `<span class="rib-must">${mustLabel(e)}</span>` : ""}</span></button>`;
+        }).join("")
+        + `</div></div>`;
+      continue;
+    }
     // 重なったら横に並べる
     const lanes = [];
     for (const it of c.items) {

@@ -6,6 +6,7 @@
   --fill-2: #f2f2f7;
   --press: #e5e5ea;
   --floor-bg: #e9e9ee;
+  --rib: #e8e8ed;
   --seg-on: #fff;
   --fg: #111;
   --sub: #6c6c70;
@@ -37,6 +38,7 @@
     --fill-2: #2c2c2e;
     --press: #2c2c2e;
     --floor-bg: #2c2c2e;
+    --rib: #2f2f33;
     --seg-on: #636366;
     --fg: #f2f2f7;
     --sub: #a1a1a6;
@@ -245,6 +247,18 @@ h2.sec small { font-size: 14px; font-weight: 600; color: var(--sub); margin-left
 }
 .blk .lu.on { background: var(--live-bg); color: var(--live); font-weight: 700; }
 .blk .lu.done { opacity: .5; }
+/* 終日の企画：階ごとの細い列に、縦書きの帯 */
+.tt-col.dayc { flex-grow: 0; }
+.rib {
+  position: absolute; width: 26px; padding: 8px 0; overflow: hidden;
+  border: 0; border-radius: 8px; background: var(--rib); color: var(--fg); cursor: pointer;
+  display: flex; justify-content: center; align-items: flex-start;
+}
+.rib:active { filter: brightness(.95); }
+.rib-in { writing-mode: vertical-rl; text-orientation: mixed; font-size: 13px; line-height: 1.2; letter-spacing: .02em; white-space: nowrap; }
+.rib-in b { font-weight: 700; }
+.rib-room { margin-top: 8px; color: var(--sub); font-size: 12px; font-weight: 600; }
+.rib-must { margin-top: 8px; color: var(--must); font-size: 12px; font-weight: 700; }
 .nowline { position: absolute; left: 0; right: 0; border-top: 2px solid var(--live); z-index: 1; pointer-events: none; }
 
 /* パンフ */
