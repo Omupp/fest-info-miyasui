@@ -8,7 +8,7 @@ const fmt = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, "0")}`;
 const norm = (s) => String(s || "").normalize("NFKC").toLowerCase();
 
 let FEST, EVENTS, ORGS, BY_ID;
-const state = { ttDay: null, pfDay: "all", genre: "all", q: "" };
+const state = { ttDay: null, pfDay: null, genre: "all", q: "" };
 
 function jstNow() {
   const d = new Date(Date.now() + 9 * 3600e3);
@@ -418,11 +418,12 @@ const GENRES = [
 const inGenre = (e, g) => g === "all" || GENRES.find(([name]) => name === g)[1].some((t) => e.tags.includes(t));
 
 function renderPamph() {
-  if (finishedDays().includes(state.pfDay)) state.pfDay = "all";
-  renderDays($("pf-days"), [["all", "すべて"], ...FEST.days.map((d) => [d.key, d.label])], state.pfDay, (k) => { state.pfDay = k; renderPamph(); }, finishedDays());
+  // 日付は 2 択（タイムテーブルと同じく、終わった日は押せない）
+  if (!state.pfDay || finishedDays().includes(state.pfDay)) state.pfDay = defaultDay();
+  renderDays($("pf-days"), FEST.days.map((d) => [d.key, d.label]), state.pfDay, (k) => { state.pfDay = k; renderPamph(); }, finishedDays());
   renderDays($("genre"), [["all", "すべて"], ...GENRES.map(([name]) => [name, name])], state.genre, (k) => { state.genre = k; renderPamph(); });
   const words = norm(state.q).trim().split(/\s+/).filter(Boolean);
-  const list = EVENTS.filter((e) => (state.pfDay === "all" || e.sessions.some((s) => s.day === state.pfDay)) && inGenre(e, state.genre) && words.every((w) => e.haystack.includes(w)));
+  const list = EVENTS.filter((e) => e.sessions.some((s) => s.day === state.pfDay) && inGenre(e, state.genre) && words.every((w) => e.haystack.includes(w)));
   const floors = new Map();
   for (const e of list) {
     const k = e.floor ?? 99;
@@ -612,6 +613,8 @@ async function main() {
   $("pv-close").onclick = () => $("pamph-view").close();
   $("pv-jump").addEventListener("change", (ev) => showPamphPage(+ev.target.value));
   setInterval(() => {
+    // 閉場の時刻になったら、パンフも次の日へ
+    if (!$("view-pamph").hidden && finishedDays().includes(state.pfDay)) renderPamph();
     if ($("view-time").hidden) return;
     // 「いま」の箱の高さが変わっても、その下を読んでいる人の位置がずれないように
     const box = $("nowbox"), before = box.offsetHeight, above = box.getBoundingClientRect().bottom < 80;
