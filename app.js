@@ -72,7 +72,7 @@ function detailHTML(e) {
     ${img ? `<div class="ev-img"><img src="${esc(img)}" alt="${esc(e.title)}のポスター" width="960" height="540"></div>` : ""}
     <h3>${esc(e.title)}</h3>
     ${e.organizer ? `<p class="org">${esc(e.organizer.name)}</p>` : ""}
-    ${e.reserve ? `<p class="must-line">${mustTag(e)}<a class="reserve" href="${esc(safeUrl(e.reserve.url))}" target="_blank" rel="noopener">${esc(e.reserve.label)}</a><span class="must-how">${esc(e.reserve.note || "")}</span></p>`
+    ${e.reserve ? `<p class="must-line">${mustTag(e)}<a class="reserve${e.reserve.closed ? " closed" : ""}" href="${esc(safeUrl(e.reserve.url))}" target="_blank" rel="noopener">${esc(e.reserve.label)}</a><span class="must-how">${esc(e.reserve.note || "")}</span></p>`
       : mustLabel(e) ? `<p class="must-line">${mustTag(e)}<span class="must-how">予約のしかたは公式の${officialLinks()}でご確認ください</span></p>` : ""}
     <dl><dt>日時</dt><dd>${esc(when(e))}</dd><dt>場所</dt><dd>${esc(place(e))}</dd></dl>
     ${e.description ? `<p class="desc">${esc(e.description)}</p>` : ""}

@@ -369,6 +369,7 @@ dialog::backdrop { background: rgba(0, 0, 0, .4); }
 .ev .src { margin: 8px 0 0; font-size: 15px; }
 .ev .reserve { display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px; border-radius: 10px; background: var(--accent); color: var(--on-accent); font-weight: 700; font-size: 15px; }
 .ev .reserve:hover { text-decoration: none; filter: brightness(1.05); }
+.ev .reserve.closed { min-height: 0; padding: 0; background: none; color: var(--accent); font-weight: 600; } /* 受付が終わったものはボタンにしない */
 .menu { list-style: none; margin: 8px 0 0; padding: 0; background: var(--fill-2); border-radius: 12px; overflow: hidden; }
 .menu li { display: flex; justify-content: space-between; gap: 12px; padding: 8px 14px; }
 .menu li + li { border-top: 1px solid var(--sep); }
