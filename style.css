@@ -128,6 +128,8 @@ header.site h1 { margin: 0; font-size: 30px; line-height: 1.15; font-weight: 800
   color: var(--fg); font-size: 15px; font-weight: 600; cursor: pointer;
 }
 .seg > [aria-current="page"], .seg > [aria-pressed="true"] { background: var(--seg-on); font-weight: 800; }
+.seg > button:disabled { color: var(--sub); opacity: .55; cursor: default; }
+.seg .done-mark { margin-left: 4px; font-size: 12px; font-weight: 600; }
 
 h2.sec { font-size: 20px; font-weight: 800; margin: 28px 4px 8px; }
 h2.sec small { font-size: 14px; font-weight: 600; color: var(--sub); margin-left: 8px; }

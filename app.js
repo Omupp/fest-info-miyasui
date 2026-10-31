@@ -13,7 +13,20 @@ const state = { ttDay: null, pfDay: "all", genre: "all", q: "" };
 function jstNow() {
   const d = new Date(Date.now() + 9 * 3600e3);
   const key = String(d.getUTCMonth() + 1).padStart(2, "0") + "-" + String(d.getUTCDate()).padStart(2, "0");
-  return { key, min: d.getUTCHours() * 60 + d.getUTCMinutes() };
+  return { key, date: d.toISOString().slice(0, 10), min: d.getUTCHours() * 60 + d.getUTCMinutes() };
+}
+
+// 終わった日（閉場の時刻を過ぎた日）。押せないようにする。2 日とも終わったら、どちらも見返せるように戻す
+function finishedDays() {
+  const now = jstNow();
+  const fin = FEST.days.filter((d) => d.date < now.date || (d.date === now.date && now.min >= toMin(FEST.close))).map((d) => d.key);
+  return fin.length === FEST.days.length ? [] : fin;
+}
+// 開いたときに選ぶ日：今日（終わっていなければ）→ まだ終わっていない最初の日
+function defaultDay() {
+  const now = jstNow(), fin = finishedDays();
+  const open = FEST.days.filter((d) => !fin.includes(d.key));
+  return (open.find((d) => d.key === now.key) || open[0] || FEST.days[0]).key;
 }
 
 const place = (e) => [e.floor ? `${e.floor}階` : "", e.room].filter(Boolean).join(" ");
@@ -230,13 +243,15 @@ function renderNow(items) {
   const now = jstNow();
   const box = $("nowbox");
   const open = toMin(FEST.open), close = toMin(FEST.close);
-  if (now.key !== state.ttDay) { box.innerHTML = ""; return; }
-  if (now.min >= close) {
-    const next = FEST.days[FEST.days.findIndex((d) => d.key === now.key) + 1];
+  // 今日が終わったあとは、今日か次の日を見ているあいだ「本日は終了しました」を出す
+  const idx = FEST.days.findIndex((d) => d.key === now.key);
+  if (idx >= 0 && now.min >= close && (state.ttDay === now.key || FEST.days[idx + 1]?.key === state.ttDay)) {
+    const next = FEST.days[idx + 1];
     box.innerHTML = `<section class="nowbox done" aria-label="いま"><h2>本日は終了しました</h2>
       <p class="nb-note">${next ? `あすは ${esc(next.label)} ${esc(FEST.open)}〜${esc(FEST.close)}` : "今年の開催はすべて終わりました"}</p></section>`;
     return;
   }
+  if (now.key !== state.ttDay) { box.innerHTML = ""; return; }
   const live = items.filter((it) => it.start <= now.min && now.min < it.end);
   const next = items.filter((it) => it.start > now.min).slice(0, 3);
   const inHours = now.min >= open;
@@ -328,7 +343,7 @@ function syncHeads() {
 
 function renderTime() {
   const day = state.ttDay;
-  renderDays($("tt-days"), FEST.days.map((d) => [d.key, d.label]), day, (k) => { state.ttDay = k; renderTime(); });
+  renderDays($("tt-days"), FEST.days.map((d) => [d.key, d.label]), day, (k) => { state.ttDay = k; renderTime(); }, finishedDays());
   const items = timedItems(day);
   let from = toMin(FEST.open), to = toMin(FEST.close);
   for (const it of items) { from = Math.min(from, Math.floor(it.start / 60) * 60); to = Math.max(to, Math.ceil(it.end / 60) * 60); }
@@ -403,7 +418,8 @@ const GENRES = [
 const inGenre = (e, g) => g === "all" || GENRES.find(([name]) => name === g)[1].some((t) => e.tags.includes(t));
 
 function renderPamph() {
-  renderDays($("pf-days"), [["all", "すべて"], ...FEST.days.map((d) => [d.key, d.label])], state.pfDay, (k) => { state.pfDay = k; renderPamph(); });
+  if (finishedDays().includes(state.pfDay)) state.pfDay = "all";
+  renderDays($("pf-days"), [["all", "すべて"], ...FEST.days.map((d) => [d.key, d.label])], state.pfDay, (k) => { state.pfDay = k; renderPamph(); }, finishedDays());
   renderDays($("genre"), [["all", "すべて"], ...GENRES.map(([name]) => [name, name])], state.genre, (k) => { state.genre = k; renderPamph(); });
   const words = norm(state.q).trim().split(/\s+/).filter(Boolean);
   const list = EVENTS.filter((e) => (state.pfDay === "all" || e.sessions.some((s) => s.day === state.pfDay)) && inGenre(e, state.genre) && words.every((w) => e.haystack.includes(w)));
@@ -475,9 +491,11 @@ function sourcesHTML() {
 
 /* ---------- 共通 ---------- */
 
-function renderDays(el, opts, cur, onPick) {
-  el.innerHTML = opts.map(([k, l]) => `<button type="button" aria-pressed="${k === cur}" data-k="${esc(k)}">${esc(l)}</button>`).join("");
-  el.onclick = (ev) => { const b = ev.target.closest("button"); if (b) onPick(b.dataset.k); };
+function renderDays(el, opts, cur, onPick, done = []) {
+  el.innerHTML = opts.map(([k, l]) => done.includes(k)
+    ? `<button type="button" disabled aria-pressed="false" data-k="${esc(k)}">${esc(l)}<span class="done-mark">終了</span></button>`
+    : `<button type="button" aria-pressed="${k === cur}" data-k="${esc(k)}">${esc(l)}</button>`).join("");
+  el.onclick = (ev) => { const b = ev.target.closest("button"); if (b && !b.disabled) onPick(b.dataset.k); };
 }
 
 let curTab = null;
@@ -548,8 +566,7 @@ async function main() {
   for (const o of ORGS) o.links = [...o.links, ...((extra.organizer_links || {})[o.id] || [])];
   for (const e of added) if (e.organizer && !ORGS.some((o) => o.id === e.organizer.id)) ORGS.push({ ...e.organizer, description: "", links: [] });
 
-  const now = jstNow();
-  state.ttDay = FEST.days.some((d) => d.key === now.key) ? now.key : FEST.days[0].key;
+  state.ttDay = defaultDay();
 
   $("site-sub").innerHTML = `<span class="when">${esc(FEST.days.map((d) => d.label).join("・"))} <span class="nw">${esc(FEST.open)}〜${esc(FEST.close)}</span></span><span class="where">${esc(FEST.campus)}</span>`;
   const upd = fest.updated_at ? fest.updated_at.replace(/^\d{4}-(\d\d)-(\d\d)T(\d\d:\d\d).*/, (_, m, d, t) => `${+m}/${+d} ${t}`) : "";
@@ -598,6 +615,7 @@ async function main() {
     if ($("view-time").hidden) return;
     // 「いま」の箱の高さが変わっても、その下を読んでいる人の位置がずれないように
     const box = $("nowbox"), before = box.offsetHeight, above = box.getBoundingClientRect().bottom < 80;
+    if (finishedDays().includes(state.ttDay)) state.ttDay = defaultDay(); // 閉場の時刻になったら次の日へ
     renderTime();
     if (above) window.scrollBy(0, box.offsetHeight - before);
   }, 60e3);
