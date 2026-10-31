@@ -7,6 +7,8 @@
   --press: #e5e5ea;
   --floor-bg: #e9e9ee;
   --bar-bg: #fdf1ee;
+  --allday-bg: #eaf2fc;   /* 常設（終日）の帯は青（灰色に見えないよう、はっきり青に） */
+  --allday-live: #d5e6fb;
   --bar-live: #fde4de;
   --bar-live-sub: #4a4a4f;
   --seg-on: #fff;
@@ -39,6 +41,8 @@
     --press: #2c2c2e;
     --floor-bg: #2c2c2e;
     --bar-bg: #33231f;
+    --allday-bg: #1e2a3a;
+    --allday-live: #1d3554;
     --bar-live: #4a2219;
     --bar-live-sub: #c7c7cc;
     --seg-on: #636366;
@@ -234,6 +238,9 @@ h2.sec small { font-size: 14px; font-weight: 600; color: var(--sub); margin-left
 .tlb:not(.allday) { border-left: 4px solid var(--brand); }
 /* 色は「いま」で分ける（番組表と同じ）：開催中＝はっきりした淡い朱（時刻の決まった企画は「開催中」の文字も）・これから＝ごく淡い朱・終わった＝薄く。灰色は終わったものだけ */
 .tlb.live { background: var(--bar-live); }
+/* 常設（終日）は青、時刻の決まった企画は朱。どちらも開催中は濃いめ */
+.tlb.allday { background: var(--allday-bg); }
+.tlb.allday.live { background: var(--allday-live); }
 .tlb.live .m { color: var(--bar-live-sub); }
 .tlb .on { color: var(--live); font-weight: 800; }
 .tlb.past { opacity: .45; }
