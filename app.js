@@ -270,16 +270,19 @@ const roomLabel = (room) => (/^[\d・]+教室$/.test(room) ? room.replace(/教�
 
 function barHTML(b, from, ppm, now, day) {
   const left = (b.start - from) * ppm, w = Math.max(18, (b.end - b.start) * ppm - 3);
-  const st = b.allday ? "" : liveState(b, now, day);
+  const st = liveState(b, now, day); // 終日の企画も開場中は「開催中」
   const name = b.name.replace(/^iTLFest\.\s*/, "");
-  let meta = b.allday ? "終日" : `${fmt(b.start)}〜${fmt(b.end)}`;
+  // 開催中は色だけに頼らず文字でも出す（終わる時刻を添える）
+  let meta = b.allday ? "終日" : st === "live" ? `${fmt(b.end)}まで` : `${fmt(b.start)}〜${fmt(b.end)}`;
   const extra = b.lineup && b.lineup.length ? subText(b, st) : b.sub;
   if (extra) meta += `・${extra}`;
+  // 赤い「開催中」は時刻の決まった企画だけ（終日の帯は地の色だけにして、同じ文字を並べない）
+  const on = st === "live" && !b.allday ? `<b class="on">開催中</b>・` : "";
   const narrow = w < 84; // 短い枠は時刻だけ（名前は押した先で）
   return `<div role="button" tabindex="0" class="tlb${b.allday ? " allday" : ""}${narrow ? " narrow" : ""} ${st}" data-id="${esc(b.e.id)}"`
-    + ` style="left:${left}px;top:${3 + b.lane * LANE_H}px;width:${w}px" aria-label="${esc(b.name)} ${esc(meta)}">`
+    + ` style="left:${left}px;top:${3 + b.lane * LANE_H}px;width:${w}px" aria-label="${esc(b.name)} ${st === "live" ? "開催中 " : st === "past" ? "終了 " : ""}${esc(meta)}">`
     + (narrow ? `<span class="in"><span class="n tnum">${fmt(b.start)}</span></span>`
-      : `<span class="in"><span class="n">${esc(name)}${mustTag(b.e)}</span><span class="m">${esc(meta)}</span></span>`)
+      : `<span class="in"><span class="n">${esc(name)}${mustTag(b.e)}</span><span class="m">${on}${esc(meta)}</span></span>`)
     + `</div>`;
 }
 
@@ -322,6 +325,7 @@ function renderGrid(items, from, to) {
   $("tt").style.width = `${LABEL_W + W}px`;
   let ruler = "";
   for (let m = from; m <= to; m += 60) ruler += `<span class="tl-hour tnum${m === from ? " first" : m === to ? " last" : ""}" style="left:${(m - from) * ppm}px">${m / 60}:00</span>`;
+  if (now.key === day && now.min >= from && now.min <= to) ruler += `<span class="tl-nowmark" style="left:${(now.min - from) * ppm}px"></span>`;
   $("tl-ruler").innerHTML = ruler;
   // 当日は、開いたときに今の時刻のあたりまでずらす（その日 1 回だけ。読んでいる最中に動かさない）
   if (wrap.clientWidth > 0 && now.key === day && now.min >= from && now.min < to && state.scrolledDay !== day) {
@@ -338,7 +342,11 @@ function updateHint() {
   syncHeads();
 }
 function syncHeads() {
-  $("tl-ruler").style.transform = `translateX(${-$("tt-wrap").scrollLeft}px)`;
+  const sl = $("tt-wrap").scrollLeft;
+  $("tl-ruler").style.transform = `translateX(${-sl}px)`;
+  // いまの線が左の部屋名の列の下に入ったら隠す（階の見出しや行の境目から見えないように）
+  const nowEl = document.querySelector(".tl-now");
+  if (nowEl) nowEl.style.visibility = parseFloat(nowEl.style.left) - sl < LABEL_W ? "hidden" : "";
 }
 
 function renderTime() {

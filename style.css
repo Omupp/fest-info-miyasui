@@ -6,9 +6,10 @@
   --fill-2: #f2f2f7;
   --press: #e5e5ea;
   --floor-bg: #e9e9ee;
-  --rib: #e8e8ed;
-  --allday-bg: #e8eef6;
-  --allday-edge: #8ea2bc;
+  --bar-bg: #fff;
+  --bar-line: #d6d6db;
+  --bar-live: #fde4de;
+  --bar-live-sub: #4a4a4f;
   --seg-on: #fff;
   --fg: #111;
   --sub: #6c6c70;
@@ -19,10 +20,8 @@
   --on-accent: #fff;
   --must: #9a5800;
   --must-bg: #fff0d6;
-  --live: #1a7f37;
-  --live-bg: #e1f4e6;
-  --block: #fbefec;
-  --block-edge: #e23924;
+  --live: #c42f1b;    /* 開催中も学部の朱で（緑は使わない） */
+  --live-bg: #fbe7e3;
   --brand: #e23924;   /* 学部（iTL）のロゴの朱 */
   --brand-white: #e9e6e3;
   --brand-black: #000;
@@ -40,9 +39,10 @@
     --fill-2: #2c2c2e;
     --press: #2c2c2e;
     --floor-bg: #2c2c2e;
-    --rib: #2f2f33;
-    --allday-bg: #1e2733;
-    --allday-edge: #6f87a5;
+    --bar-bg: #1c1c1e;
+    --bar-line: #48484a;
+    --bar-live: #4a2219;
+    --bar-live-sub: #c7c7cc;
     --seg-on: #636366;
     --fg: #f2f2f7;
     --sub: #a1a1a6;
@@ -53,10 +53,8 @@
     --on-accent: #1a0503;
     --must: #ffb547;
     --must-bg: #3a2a0f;
-    --live: #4cd471;
-    --live-bg: #12301c;
-    --block: #2a1d1b;
-    --block-edge: #e23924;
+    --live: #ff6a52;
+    --live-bg: #3a1813;
   }
 }
 
@@ -211,7 +209,7 @@ h2.sec small { font-size: 14px; font-weight: 600; color: var(--sub); margin-left
 .tl-hour.last { transform: translateX(calc(-100% - 4px)); }
 .tl { position: relative; }
 .tl-floor { display: flex; height: 32px; align-items: flex-end; background: var(--card); border-bottom: 1px solid var(--sep); }
-.tl-floor span { position: sticky; left: 0; padding: 0 12px 5px; font-size: 15px; font-weight: 800; }
+.tl-floor span { position: sticky; left: 0; z-index: 3; padding: 0 12px 5px; background: var(--card); font-size: 15px; font-weight: 800; }
 .tl-floor:not(:first-child) { border-top: 1px solid var(--chev); }
 .tl-row { display: flex; border-bottom: 1px solid var(--sep); }
 .tl-label {
@@ -224,7 +222,7 @@ h2.sec small { font-size: 14px; font-weight: 600; color: var(--sub); margin-left
 .tlb {
   /* はみ出しは clip-path で隠す（overflow:hidden だと中の名前が左に付いてこない） */
   position: absolute; height: 40px; clip-path: inset(0 round 8px); cursor: pointer;
-  border-radius: 8px; background: var(--block); border-left: 4px solid var(--block-edge);
+  border-radius: 8px; background: var(--bar-bg); border: 1px solid var(--bar-line); border-left: 4px solid var(--brand);
   -webkit-tap-highlight-color: transparent;
 }
 .tlb:active { filter: brightness(.96); }
@@ -232,12 +230,18 @@ h2.sec small { font-size: 14px; font-weight: 600; color: var(--sub); margin-left
 .tlb .n { display: block; overflow: hidden; text-overflow: ellipsis; font-size: 13px; font-weight: 700; line-height: 17px; }
 .tlb .n .tag { margin-left: 6px; line-height: 16px; font-size: 11px; }
 .tlb .m { display: block; overflow: hidden; text-overflow: ellipsis; font-size: 12px; line-height: 16px; color: var(--sub); }
-.tlb.narrow .in { padding: 0 3px; }
-.tlb.narrow .n { line-height: 40px; font-size: 11px; text-overflow: clip; }
-.tlb.allday { background: var(--allday-bg); border-left-color: var(--allday-edge); } /* 終日は淡い青みのグレー（朱の帯と階の見出しから離す） */
+.tlb.narrow { border-left-width: 3px; } /* 20 分の枠にも時刻が収まるように */
+.tlb.narrow .in { padding: 0 1px; }
+.tlb.narrow .n { line-height: 38px; font-size: 11px; letter-spacing: -.2px; text-overflow: clip; }
+/* 色は「いま」で分ける（番組表と同じ）：開催中＝淡い朱の地（時刻の決まった企画は「開催中」の文字も）・これから＝白・終わった＝薄く。灰色は終わったものだけ */
+.tlb.live { background: var(--bar-live); border-color: var(--bar-live); border-left-color: var(--brand); }
+.tlb.live .m { color: var(--bar-live-sub); }
+.tlb .on { color: var(--live); font-weight: 800; }
 .tlb.past { opacity: .45; }
-.tlb.live { outline: 2px solid var(--live); outline-offset: -2px; } /* 開催中は緑の枠（帯の色は変えない） */
-.tl-now { position: absolute; top: 0; bottom: 0; width: 0; border-left: 2px solid var(--live); z-index: 2; pointer-events: none; }
+/* いまの線は帯の後ろ（名前に重ねない）。上の目盛りに印 */
+.tlb { z-index: 1; }
+.tl-now { position: absolute; top: 0; bottom: 0; width: 0; border-left: 2px solid var(--brand); z-index: 0; pointer-events: none; }
+.tl-nowmark { position: absolute; bottom: 0; width: 0; height: 0; transform: translateX(-5px); border: 6px solid transparent; border-top: 7px solid var(--brand); border-bottom: 0; }
 
 /* パンフ */
 .search {
