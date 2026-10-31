@@ -528,6 +528,8 @@ async function main() {
       const s = sess.find((s) => s.day === b.day && toMin(s.start) <= start && start < toMin(s.end));
       const limit = s ? toMin(s.end) : start + 20;
       const nx = arr[i + 1];
+      // 終わりの時刻が書いてあればそれを使う（持ち時間どおり）。なければ次の組の始まりか枠の終わり
+      if (b.end) return { ...b, startMin: start, endMin: toMin(b.end) };
       return { ...b, startMin: start, endMin: nx && nx.day === b.day && toMin(nx.start) <= limit ? toMin(nx.start) : limit };
     });
     return {
