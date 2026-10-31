@@ -262,7 +262,7 @@ function renderNow(items) {
   </section>`;
 }
 
-// 時間割：部屋を行（階ごと・上の階から）、時間を横にした「部屋割り」の表。
+// タイムテーブル：部屋を行（階ごと・上の階から）、時間を横にした「部屋割り」の表。
 // 終日の企画は行いっぱいの帯、時間が決まっている企画はその時刻の位置の帯。
 const LABEL_W = 84; // 左の部屋名の列
 const LANE_H = 46;  // 帯 1 段の高さ
@@ -302,9 +302,12 @@ function renderGrid(items, from, to) {
   for (const it of items) add(it.e, it);
   const floors = [...new Set([...rooms.values()].map((r) => r.floor))].sort((a, b) => (a === 99) - (b === 99) || b - a);
   const grid = `background-image:repeating-linear-gradient(to right, var(--sep) 0 1px, transparent 1px ${60 * ppm}px)`;
+  // 時刻の目盛りは各階の見出しの行に並べる（表と一緒に動くので、横にずらしてもずれない）
+  let hours = "";
+  for (let m = from; m <= to; m += 60) hours += `<i class="tl-hour tnum${m === from ? " first" : m === to ? " last" : ""}" style="left:${LABEL_W + (m - from) * ppm}px" aria-hidden="true">${m / 60}:00</i>`;
   let html = "";
   for (const f of floors) {
-    html += `<div class="tl-floor" style="width:${LABEL_W + W}px"><span>${f === 99 ? "その他" : `${f}階`}</span></div>`;
+    html += `<div class="tl-floor" style="width:${LABEL_W + W}px"><span>${f === 99 ? "その他" : `${f}階`}</span>${hours}</div>`;
     const rs = [...rooms.values()].filter((r) => r.floor === f).sort((a, b) => a.room.localeCompare(b.room, "ja", { numeric: true }));
     for (const r of rs) {
       // 重なる帯は段を分ける（終日を上の段に）
@@ -323,30 +326,30 @@ function renderGrid(items, from, to) {
   if (now.key === day && now.min >= from && now.min <= to) html += `<div class="tl-now" style="left:${LABEL_W + (now.min - from) * ppm}px"></div>`;
   $("tt").innerHTML = html;
   $("tt").style.width = `${LABEL_W + W}px`;
-  let ruler = "";
-  for (let m = from; m <= to; m += 60) ruler += `<span class="tl-hour tnum${m === from ? " first" : m === to ? " last" : ""}" style="left:${(m - from) * ppm}px">${m / 60}:00</span>`;
-  if (now.key === day && now.min >= from && now.min <= to) ruler += `<span class="tl-nowmark" style="left:${(now.min - from) * ppm}px"></span>`;
-  $("tl-ruler").innerHTML = ruler;
+  // 帯の名前の箱を見えている幅より広くしない（右の端までずらしても、長い名前の頭が左で欠けないように）
+  $("tt").style.setProperty("--vis", `${Math.max(120, (wrap.clientWidth || 0) - LABEL_W - 24)}px`);
   // 当日は、開いたときに今の時刻のあたりまでずらす（その日 1 回だけ。読んでいる最中に動かさない）
   if (wrap.clientWidth > 0 && now.key === day && now.min >= from && now.min < to && state.scrolledDay !== day) {
-    wrap.scrollLeft = Math.max(0, (now.min - from - 30) * ppm);
+    // 左端が時刻の文字の途中にかからないように少し進める（「:00」だけ見えるのを避ける）
+    let x = now.min - from - 30;
+    const r = ((x % 60) + 60) % 60;
+    if (r < 11) x += 11 - r; else if (r > 49) x += 71 - r;
+    if (x < 21) x = 0; // 先頭の「10:00」は左寄せで 20 分ぶんの幅がある
+    wrap.scrollLeft = Math.max(0, x * ppm);
     state.scrolledDay = day;
   }
 }
 
-// 表が画面からはみ出すときだけ「左右にずらせる」と出す。上の時刻の目盛りを表にそろえる
+// 表が画面からはみ出すときだけ「左右にずらせる」と出す
 function updateHint() {
   const w = $("tt-wrap");
   $("tt-hint").hidden = w.scrollWidth <= w.clientWidth + 1;
-  document.documentElement.style.setProperty("--bar-h", `${document.querySelector(".bar").offsetHeight}px`);
-  syncHeads();
+  syncNow();
 }
-function syncHeads() {
-  const sl = $("tt-wrap").scrollLeft;
-  $("tl-ruler").style.transform = `translateX(${-sl}px)`;
-  // いまの線が左の部屋名の列の下に入ったら隠す（階の見出しや行の境目から見えないように）
+// いまの線が左の部屋名の列の下に入ったら隠す（行の境目から見えないように）
+function syncNow() {
   const nowEl = document.querySelector(".tl-now");
-  if (nowEl) nowEl.style.visibility = parseFloat(nowEl.style.left) - sl < LABEL_W ? "hidden" : "";
+  if (nowEl) nowEl.style.visibility = parseFloat(nowEl.style.left) - $("tt-wrap").scrollLeft < LABEL_W ? "hidden" : "";
 }
 
 function renderTime() {
@@ -594,7 +597,7 @@ async function main() {
   window.addEventListener("hashchange", route);
   let resizeT;
   window.addEventListener("resize", () => { clearTimeout(resizeT); resizeT = setTimeout(() => { if (!$("view-time").hidden) renderTime(); }, 150); });
-  $("tt-wrap").addEventListener("scroll", syncHeads, { passive: true });
+  $("tt-wrap").addEventListener("scroll", syncNow, { passive: true });
   $("q").addEventListener("input", (ev) => { state.q = ev.target.value; renderPamph(); });
   document.addEventListener("keydown", (ev) => {
     const t = ev.target.closest && ev.target.closest('[role="button"][data-id]');

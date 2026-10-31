@@ -6,8 +6,7 @@
   --fill-2: #f2f2f7;
   --press: #e5e5ea;
   --floor-bg: #e9e9ee;
-  --bar-bg: #fff;
-  --bar-line: #d6d6db;
+  --bar-bg: #fdf1ee;
   --bar-live: #fde4de;
   --bar-live-sub: #4a4a4f;
   --seg-on: #fff;
@@ -39,8 +38,7 @@
     --fill-2: #2c2c2e;
     --press: #2c2c2e;
     --floor-bg: #2c2c2e;
-    --bar-bg: #1c1c1e;
-    --bar-line: #48484a;
+    --bar-bg: #33231f;
     --bar-live: #4a2219;
     --bar-live-sub: #c7c7cc;
     --seg-on: #636366;
@@ -193,23 +191,20 @@ h2.sec small { font-size: 14px; font-weight: 600; color: var(--sub); margin-left
 .dir-row .r-title .tag { margin-left: 6px; }
 .dir-room { flex: 0 0 auto; font-size: 16px; font-weight: 700; color: var(--sub); }
 
-/* 時間割：部屋を行・時間を横にした「部屋割り」の表。左の部屋名と上の時刻は止まったまま */
+/* タイムテーブル：部屋を行・時間を横にした「部屋割り」の表。左の部屋名は止まったまま */
 .tt-hint { margin: -2px 4px 8px; font-size: 13px; color: var(--sub); }
 .tt-card { overflow: hidden; overflow: clip; }
 .tt-wrap { overflow-x: auto; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
-.tl-ruler {
-  position: sticky; top: var(--bar-h, 60px); z-index: 4;
-  display: flex; height: 30px; background: var(--card); border-bottom: 1px solid var(--sep);
-}
-.tl-rlabel { flex: 0 0 84px; border-right: 1px solid var(--sep); }
-.tl-rview { flex: 1 1 auto; min-width: 0; overflow: hidden; position: relative; }
-.tl-rinner { position: relative; height: 30px; will-change: transform; }
-.tl-hour { position: absolute; top: 7px; font-size: 12px; font-weight: 600; color: var(--sub); transform: translateX(-50%); white-space: nowrap; }
-.tl-hour.first { transform: translateX(4px); }
-.tl-hour.last { transform: translateX(calc(-100% - 4px)); }
 .tl { position: relative; }
-.tl-floor { display: flex; height: 32px; align-items: flex-end; background: var(--card); border-bottom: 1px solid var(--sep); }
-.tl-floor span { position: sticky; left: 0; z-index: 3; padding: 0 12px 5px; background: var(--card); font-size: 15px; font-weight: 800; }
+/* 階の見出しの行に時刻の目盛りも並べる（左の「○階」は止まったまま、時刻は表と一緒に動く） */
+.tl-floor { position: relative; display: flex; height: 32px; background: var(--card); border-bottom: 1px solid var(--sep); }
+.tl-floor span {
+  position: sticky; left: 0; z-index: 3; display: flex; align-items: flex-end; min-width: 84px;
+  padding: 0 12px 6px; background: var(--card); font-size: 15px; font-weight: 800; line-height: 18px;
+}
+.tl-hour { position: absolute; bottom: 6px; z-index: 1; padding: 0 3px; background: var(--card); font-size: 12px; font-style: normal; font-weight: 600; line-height: 18px; color: var(--sub); transform: translateX(-50%); white-space: nowrap; }
+.tl-hour.first { transform: translateX(1px); }
+.tl-hour.last { transform: translateX(calc(-100% - 1px)); }
 .tl-floor:not(:first-child) { border-top: 1px solid var(--chev); }
 .tl-row { display: flex; border-bottom: 1px solid var(--sep); }
 .tl-label {
@@ -222,26 +217,30 @@ h2.sec small { font-size: 14px; font-weight: 600; color: var(--sub); margin-left
 .tlb {
   /* はみ出しは clip-path で隠す（overflow:hidden だと中の名前が左に付いてこない） */
   position: absolute; height: 40px; clip-path: inset(0 round 8px); cursor: pointer;
-  border-radius: 8px; background: var(--bar-bg); border: 1px solid var(--bar-line); border-left: 4px solid var(--brand);
+  border-radius: 8px; background: var(--bar-bg);
   -webkit-tap-highlight-color: transparent;
 }
 .tlb:active { filter: brightness(.96); }
-.tlb .in { position: sticky; left: 88px; display: inline-block; max-width: 100%; padding: 3px 8px; white-space: nowrap; vertical-align: top; } /* 中身の幅にして、横にずらしても名前が左に付いてくるように */
+.tlb .in { display: block; padding: 3px 8px; white-space: nowrap; }
+/* 名前の行と 2 行目は別々に左へ貼り付く（2 行目が長くても名前は押し出されない）。見えている幅より広くしない */
+.tlb .n, .tlb .m { position: sticky; left: 96px; width: fit-content; max-width: min(100%, var(--vis, 100%)); }
 .tlb .n { display: block; overflow: hidden; text-overflow: ellipsis; font-size: 13px; font-weight: 700; line-height: 17px; }
 .tlb .n .tag { margin-left: 6px; line-height: 16px; font-size: 11px; }
 .tlb .m { display: block; overflow: hidden; text-overflow: ellipsis; font-size: 12px; line-height: 16px; color: var(--sub); }
 .tlb.narrow { border-left-width: 3px; } /* 20 分の枠にも時刻が収まるように */
 .tlb.narrow .in { padding: 0 1px; }
 .tlb.narrow .n { line-height: 38px; font-size: 11px; letter-spacing: -.2px; text-overflow: clip; }
-/* 色は「いま」で分ける（番組表と同じ）：開催中＝淡い朱の地（時刻の決まった企画は「開催中」の文字も）・これから＝白・終わった＝薄く。灰色は終わったものだけ */
-.tlb.live { background: var(--bar-live); border-color: var(--bar-live); border-left-color: var(--brand); }
+/* 時刻の決まった企画だけ、始まる位置に朱の線（終日の帯は全部 10:00 から始まるので付けない。横にずらすと一斉に消えてしまう） */
+.tlb:not(.allday) { border-left: 4px solid var(--brand); }
+/* 色は「いま」で分ける（番組表と同じ）：開催中＝はっきりした淡い朱（時刻の決まった企画は「開催中」の文字も）・これから＝ごく淡い朱・終わった＝薄く。灰色は終わったものだけ */
+.tlb.live { background: var(--bar-live); }
 .tlb.live .m { color: var(--bar-live-sub); }
 .tlb .on { color: var(--live); font-weight: 800; }
 .tlb.past { opacity: .45; }
 /* いまの線は帯の後ろ（名前に重ねない）。上の目盛りに印 */
 .tlb { z-index: 1; }
 .tl-now { position: absolute; top: 0; bottom: 0; width: 0; border-left: 2px solid var(--brand); z-index: 0; pointer-events: none; }
-.tl-nowmark { position: absolute; bottom: 0; width: 0; height: 0; transform: translateX(-5px); border: 6px solid transparent; border-top: 7px solid var(--brand); border-bottom: 0; }
+.tl-now::before { content: ""; position: absolute; top: 0; left: -7px; border: 6px solid transparent; border-top: 7px solid var(--brand); border-bottom: 0; }
 
 /* パンフ */
 .search {
