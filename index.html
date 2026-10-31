@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="style.css?v=48">
+<link rel="stylesheet" href="style.css?v=53">
 </head>
 <body>
 <header class="site">
@@ -33,10 +33,10 @@
     <div class="seg" role="group" aria-label="日付" id="tt-days"></div>
     <div id="nowbox"></div>
     <h2 class="sec">時間割</h2>
-    <p class="tt-hint" id="tt-hint" hidden>左右にずらすと、ほかの階も見られます。細い帯は終日の企画です</p>
+    <p class="tt-hint" id="tt-hint" hidden>左右にずらすと、ほかの時間も見られます</p>
     <div class="tt-card card">
-      <div class="tt-headrow" aria-hidden="true"><div class="tt-axishead"></div><div class="tt-headview"><div class="tt-headinner" id="tt-heads"></div></div></div>
-      <div class="tt-wrap" id="tt-wrap"><div class="tt" id="tt"></div></div>
+      <div class="tl-ruler" aria-hidden="true"><div class="tl-rlabel"></div><div class="tl-rview"><div class="tl-rinner" id="tl-ruler"></div></div></div>
+      <div class="tt-wrap" id="tt-wrap"><div class="tl" id="tt"></div></div>
     </div>
     <h2 class="sec" id="allday-head">終日</h2>
     <div class="dir" id="allday"></div>
@@ -78,6 +78,6 @@
   <div class="dlg-scroll pv-scroll" id="pv-scroll"></div>
 </dialog>
 
-<script src="app.js?v=48"></script>
+<script src="app.js?v=53"></script>
 </body>
 </html>

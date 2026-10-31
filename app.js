@@ -262,103 +262,83 @@ function renderNow(items) {
   </section>`;
 }
 
+// 時間割：部屋を行（階ごと・上の階から）、時間を横にした「部屋割り」の表。
+// 終日の企画は行いっぱいの帯、時間が決まっている企画はその時刻の位置の帯。
+const LABEL_W = 84; // 左の部屋名の列
+const LANE_H = 46;  // 帯 1 段の高さ
+const roomLabel = (room) => (/^[\d・]+教室$/.test(room) ? room.replace(/教室$/, "") : room);
+
+function barHTML(b, from, ppm, now, day) {
+  const left = (b.start - from) * ppm, w = Math.max(18, (b.end - b.start) * ppm - 3);
+  const st = b.allday ? "" : liveState(b, now, day);
+  const name = b.name.replace(/^iTLFest\.\s*/, "");
+  let meta = b.allday ? "終日" : `${fmt(b.start)}〜${fmt(b.end)}`;
+  const extra = b.lineup && b.lineup.length ? subText(b, st) : b.sub;
+  if (extra) meta += `・${extra}`;
+  const narrow = w < 84; // 短い枠は時刻だけ（名前は押した先で）
+  return `<div role="button" tabindex="0" class="tlb${b.allday ? " allday" : ""}${narrow ? " narrow" : ""} ${st}" data-id="${esc(b.e.id)}"`
+    + ` style="left:${left}px;top:${3 + b.lane * LANE_H}px;width:${w}px" aria-label="${esc(b.name)} ${esc(meta)}">`
+    + (narrow ? `<span class="in"><span class="n tnum">${fmt(b.start)}</span></span>`
+      : `<span class="in"><span class="n">${esc(name)}${mustTag(b.e)}</span><span class="m">${esc(meta)}</span></span>`)
+    + `</div>`;
+}
+
 function renderGrid(items, from, to) {
-  const pxPerMin = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--hour")) / 60;
-  const height = (to - from) * pxPerMin;
-  const now = jstNow();
-  const cols = new Map();
-  const fl = (f) => String(f ?? 99).padStart(2, "0");
-  for (const it of items) {
-    const k = `${fl(it.e.floor)}|1|${it.e.room}`;
-    if (!cols.has(k)) cols.set(k, { floor: it.e.floor, room: it.e.room, items: [] });
-    cols.get(k).items.push(it);
-  }
-  // 終日の企画は、階ごとの細い列に縦書きの帯で（その階の時間が決まっている教室の左に置く）
-  for (const e of alldayItems(state.ttDay)) {
-    const k = `${fl(e.floor)}|0|`;
-    if (!cols.has(k)) cols.set(k, { floor: e.floor, allday: [] });
-    cols.get(k).allday.push(e);
-  }
-  let html = `<div class="tt-col axis"><div class="tt-body" style="height:${height}px">`;
-  let heads = "";
-  for (let m = from; m <= to; m += 60) html += `<span class="hour tnum" style="top:${(m - from) * pxPerMin}px">${m / 60}:00</span>`;
-  html += `</div></div>`;
-  for (const [, c] of [...cols.entries()].sort((a, b) => a[0].localeCompare(b[0], "ja"))) {
-    if (c.allday) {
-      const top = (toMin(FEST.open) - from) * pxPerMin, h = (toMin(FEST.close) - toMin(FEST.open)) * pxPerMin - 2;
-      heads += `<div class="tt-head">${c.floor ? `<span>${c.floor}階</span>` : ""}<b>終日</b></div>`;
-      const w = Math.max(48, c.allday.length * 30 + 8), x0 = (w - (c.allday.length * 30 - 4)) / 2; // 帯は列の真ん中に
-      html += `<div class="tt-col dayc" style="flex-basis:${w}px;min-width:${w}px" role="group" aria-label="${c.floor ? `${c.floor}階の` : ""}終日の企画"><div class="tt-body" style="height:${height}px">`
-        + c.allday.map((e, i) => {
-          const room = /^[\d・]+教室$/.test(e.room) ? e.room.replace(/教室$/, "") : e.room;
-          return `<button type="button" class="rib" data-id="${esc(e.id)}" style="left:${x0 + i * 30}px;top:${top}px;height:${h}px" aria-label="${esc(e.title)}（${esc(place(e))}・終日）">`
-            + `<span class="rib-in"><b>${esc(e.title.replace(/^iTLFest\.\s*/, ""))}</b><span class="rib-room">${esc(room)}</span>${mustLabel(e) ? `<span class="rib-must">${mustLabel(e)}</span>` : ""}</span></button>`;
-        }).join("")
-        + `</div></div>`;
-      continue;
-    }
-    // 重なったら横に並べる
-    const lanes = [];
-    for (const it of c.items) {
-      let l = lanes.findIndex((end) => end <= it.start);
-      if (l < 0) { l = lanes.length; lanes.push(0); }
-      lanes[l] = it.end;
-      it.lane = l;
-    }
-    const n = Math.max(1, lanes.length);
-    const where = [c.floor ? `${c.floor}階` : "", c.room].filter(Boolean).join(" ");
-    heads += `<div class="tt-head">${c.floor ? `<span>${c.floor}階</span>` : ""}<b>${esc(c.room)}</b></div>`;
-    html += `<div class="tt-col${c.items.some((it) => it.lineup.length) ? " wide" : ""}" role="group" aria-label="${esc(where)}"><div class="tt-body" style="height:${height}px">`;
-    for (const it of c.items) {
-      const short = it.end - it.start < 45;
-      const label = it.name.replace(/^iTLFest\.\s*/, ""); // 表の中では学祭の名前を省く
-      const st = liveState(it, now, state.ttDay);
-      const lane = n > 1 ? `left:calc(${(100 / n) * it.lane}% + 4px);right:auto;width:calc(${100 / n}% - 8px);` : "";
-      const lu = it.lineup.length && !short;
-      const h = Math.max(20, (it.end - it.start) * pxPerMin - 2);
-      let inner;
-      if (lu) {
-        // 出演順は、それぞれの開始時刻の高さに置く（左の目盛りとそろい、枠の下まで使う）。上の題名と重なる分だけ下へ送る
-        const tops = [];
-        let next = 24;
-        for (const b of it.lineup) { const t = Math.max((b.startMin - it.start) * pxPerMin, next); tops.push(t); next = t + 18; }
-        inner = `<span class="lu-title">${esc(label)}</span>` + it.lineup.map((b, i) => {
-          const bs = now.key !== state.ttDay ? "" : b.endMin <= now.min ? "done" : b.startMin <= now.min ? "on" : "";
-          const bottom = i + 1 < tops.length ? tops[i + 1] : h;
-          return `<span class="lu ${bs}" style="top:${tops[i]}px;height:${bottom - tops[i]}px"><span class="tnum">${fmt(b.startMin)}</span> ${esc(b.name)}</span>`;
-        }).join("");
-      } else {
-        inner = `<span class="t tnum">${short ? fmt(it.start) : `${fmt(it.start)}〜${fmt(it.end)}`}</span><span class="n">${esc(label)}${short ? "" : mustTag(it.e)}</span>`
-          + (!short && it.sub ? `<span class="s">${esc(it.sub)}</span>` : "")
-          // 団体名は正式な名前で。折り返すなら「iTLFest.」の後ろで
-          + (!short && it.e.organizer ? `<span class="o">${esc(it.e.organizer.name).replace(/^(iTLFest\.)\s*/, "$1<wbr>")}</span>` : "");
+  const wrap = $("tt-wrap");
+  // 広い画面では横にずらさずに収まる幅、狭い画面では 1 時間 132px（20 分の枠に時刻が入る幅）
+  const ppm = Math.max(2.2, ((wrap.clientWidth || 0) - LABEL_W) / (to - from));
+  const W = Math.round((to - from) * ppm);
+  const now = jstNow(), day = state.ttDay;
+  const rooms = new Map();
+  const add = (e, b) => {
+    const k = `${e.floor ?? 99}|${e.room}`;
+    if (!rooms.has(k)) rooms.set(k, { floor: e.floor ?? 99, room: e.room, bars: [] });
+    rooms.get(k).bars.push(b);
+  };
+  for (const e of alldayItems(day)) add(e, { e, start: toMin(FEST.open), end: toMin(FEST.close), name: e.title, sub: "", lineup: [], allday: true });
+  for (const it of items) add(it.e, it);
+  const floors = [...new Set([...rooms.values()].map((r) => r.floor))].sort((a, b) => (a === 99) - (b === 99) || b - a);
+  const grid = `background-image:repeating-linear-gradient(to right, var(--sep) 0 1px, transparent 1px ${60 * ppm}px)`;
+  let html = "";
+  for (const f of floors) {
+    html += `<div class="tl-floor" style="width:${LABEL_W + W}px"><span>${f === 99 ? "その他" : `${f}階`}</span></div>`;
+    const rs = [...rooms.values()].filter((r) => r.floor === f).sort((a, b) => a.room.localeCompare(b.room, "ja", { numeric: true }));
+    for (const r of rs) {
+      // 重なる帯は段を分ける（終日を上の段に）
+      r.bars.sort((a, b) => (b.allday ? 1 : 0) - (a.allday ? 1 : 0) || a.start - b.start);
+      const lanes = [];
+      for (const b of r.bars) {
+        let l = lanes.findIndex((end) => end <= b.start);
+        if (l < 0) { l = lanes.length; lanes.push(0); }
+        lanes[l] = b.end;
+        b.lane = l;
       }
-      html += `<button type="button" class="blk ${short ? "short" : ""} ${lu ? "has-lu" : ""} ${st}" data-id="${esc(it.e.id)}" style="top:${(it.start - from) * pxPerMin}px;height:${h}px;${lane}">${inner}</button>`;
+      html += `<div class="tl-row" style="height:${lanes.length * LANE_H + 6}px"><div class="tl-label">${esc(roomLabel(r.room))}</div>`
+        + `<div class="tl-track" style="width:${W}px;${grid}">${r.bars.map((b) => barHTML(b, from, ppm, now, day)).join("")}</div></div>`;
     }
-    html += `</div></div>`;
   }
+  if (now.key === day && now.min >= from && now.min <= to) html += `<div class="tl-now" style="left:${LABEL_W + (now.min - from) * ppm}px"></div>`;
   $("tt").innerHTML = html;
-  $("tt-heads").innerHTML = heads;
-  if (now.key === state.ttDay && now.min >= from && now.min <= to) {
-    for (const body of $("tt").querySelectorAll(".tt-body")) body.insertAdjacentHTML("beforeend", `<div class="nowline" style="top:${(now.min - from) * pxPerMin}px"></div>`);
+  $("tt").style.width = `${LABEL_W + W}px`;
+  let ruler = "";
+  for (let m = from; m <= to; m += 60) ruler += `<span class="tl-hour tnum${m === from ? " first" : m === to ? " last" : ""}" style="left:${(m - from) * ppm}px">${m / 60}:00</span>`;
+  $("tl-ruler").innerHTML = ruler;
+  // 当日は、開いたときに今の時刻のあたりまでずらす（その日 1 回だけ。読んでいる最中に動かさない）
+  if (wrap.clientWidth > 0 && now.key === day && now.min >= from && now.min < to && state.scrolledDay !== day) {
+    wrap.scrollLeft = Math.max(0, (now.min - from - 30) * ppm);
+    state.scrolledDay = day;
   }
 }
 
-// 表が画面からはみ出すときだけ「左右にずらせる」と出す。教室名の行の幅と横の位置を表にそろえる
+// 表が画面からはみ出すときだけ「左右にずらせる」と出す。上の時刻の目盛りを表にそろえる
 function updateHint() {
   const w = $("tt-wrap");
   $("tt-hint").hidden = w.scrollWidth <= w.clientWidth + 1;
   document.documentElement.style.setProperty("--bar-h", `${document.querySelector(".bar").offsetHeight}px`);
-  const heads = $("tt-heads").children;
-  $("tt").querySelectorAll(".tt-col:not(.axis)").forEach((c, i) => { if (heads[i]) heads[i].style.width = `${c.getBoundingClientRect().width}px`; });
   syncHeads();
-  // 枠に収まらないときは、薄い団体名を省く
-  for (const o of $("tt").querySelectorAll(".blk .o")) {
-    if (o.getBoundingClientRect().bottom > o.parentElement.getBoundingClientRect().bottom - 4) o.remove();
-  }
 }
 function syncHeads() {
-  $("tt-heads").style.transform = `translateX(${-$("tt-wrap").scrollLeft}px)`;
+  $("tl-ruler").style.transform = `translateX(${-$("tt-wrap").scrollLeft}px)`;
 }
 
 function renderTime() {
@@ -604,9 +584,14 @@ async function main() {
   route();
 
   window.addEventListener("hashchange", route);
-  window.addEventListener("resize", updateHint);
+  let resizeT;
+  window.addEventListener("resize", () => { clearTimeout(resizeT); resizeT = setTimeout(() => { if (!$("view-time").hidden) renderTime(); }, 150); });
   $("tt-wrap").addEventListener("scroll", syncHeads, { passive: true });
   $("q").addEventListener("input", (ev) => { state.q = ev.target.value; renderPamph(); });
+  document.addEventListener("keydown", (ev) => {
+    const t = ev.target.closest && ev.target.closest('[role="button"][data-id]');
+    if (t && (ev.key === "Enter" || ev.key === " ")) { ev.preventDefault(); openDetail(t.dataset.id); }
+  });
   document.addEventListener("click", (ev) => {
     const pv = ev.target.closest("[data-pamph]");
     if (pv) { ev.preventDefault(); openPamph(+pv.dataset.pamph); return; }
