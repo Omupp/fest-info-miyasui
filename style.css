@@ -167,6 +167,10 @@ h2.sec small { font-size: 14px; font-weight: 600; color: var(--sub); margin-left
 .rows > li.empty { padding: 16px; color: var(--sub); }
 
 /* いま・このあと */
+/* 祭りのあとのお礼 */
+.thanks { margin-top: 14px; padding: 16px; background: var(--card); border-radius: var(--r-card); }
+.thanks h2 { margin: 0; font-size: 18px; font-weight: 800; }
+.thanks p { margin: 6px 0 0; line-height: 1.6; }
 .nowbox { margin-top: 14px; padding-top: 14px; background: var(--card); border-radius: var(--r-card); overflow: hidden; }
 .nowbox h2 { margin: 0 16px; font-size: 15px; font-weight: 800; color: var(--live); display: flex; align-items: baseline; gap: 8px; }
 .nowbox h2 .clock { font-size: 26px; color: var(--fg); }

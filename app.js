@@ -242,6 +242,7 @@ function timedRow(it, st) {
 function renderNow(items) {
   const now = jstNow();
   const box = $("nowbox");
+  if (!$("thanks").hidden) { box.innerHTML = ""; return; } // 全部終わったあとは上のお礼だけ
   const open = toMin(FEST.open), close = toMin(FEST.close);
   // 今日が終わったあとは、今日か次の日を見ているあいだ「本日は終了しました」を出す
   const idx = FEST.days.findIndex((d) => d.key === now.key);
@@ -581,6 +582,9 @@ async function main() {
   state.ttDay = defaultDay();
 
   $("site-sub").innerHTML = `<span class="when">${esc(FEST.days.map((d) => d.label).join("・"))} <span class="nw">${esc(FEST.open)}〜${esc(FEST.close)}</span></span><span class="where">${esc(FEST.campus)}</span>`;
+  // 最終日が終わったら、上にお礼を出す
+  const last = FEST.days[FEST.days.length - 1], now0 = jstNow();
+  $("thanks").hidden = !(last.date < now0.date || (last.date === now0.date && now0.min >= toMin(FEST.close)));
   const upd = fest.updated_at ? fest.updated_at.replace(/^\d{4}-(\d\d)-(\d\d)T(\d\d:\d\d).*/, (_, m, d, t) => `${+m}/${+d} ${t}`) : "";
   $("foot").innerHTML = `<p>非公式のまとめです。最新の情報は<a href="https://itlfest.com/" target="_blank" rel="noopener">公式サイト</a>でご確認ください。</p>
     <p>企画の情報は<a href="${esc(safeUrl(fest.source))}" target="_blank" rel="noopener">学祭ポータル</a>（C3 | Creative Computing Club）から。画像と文章は iTLFest.実行委員会と各団体のものです。時刻・教室・予約・メニューなどの一部は、公式パンフ・ポスター・公式サイトから補いました。</p>
