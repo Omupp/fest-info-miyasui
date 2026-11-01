@@ -585,10 +585,15 @@ async function main() {
   // 最終日が終わったら、上にお礼を出す
   const last = FEST.days[FEST.days.length - 1], now0 = jstNow();
   $("thanks").hidden = !(last.date < now0.date || (last.date === now0.date && now0.min >= toMin(FEST.close)));
+  if (!$("thanks").hidden) {
+    // 祭りのあとは、お礼と公式パンフの入口だけにする（タブ・タイムテーブル・パンフの一覧は出さない）
+    document.body.classList.add("ended");
+    $("thanks").after(document.querySelector(".pv-entry"));
+  }
   const upd = fest.updated_at ? fest.updated_at.replace(/^\d{4}-(\d\d)-(\d\d)T(\d\d:\d\d).*/, (_, m, d, t) => `${+m}/${+d} ${t}`) : "";
   $("foot").innerHTML = `<p>非公式のまとめです。最新の情報は<a href="https://itlfest.com/" target="_blank" rel="noopener">公式サイト</a>でご確認ください。</p>
     <p>企画の情報は<a href="${esc(safeUrl(fest.source))}" target="_blank" rel="noopener">学祭ポータル</a>（C3 | Creative Computing Club）から。画像と文章は iTLFest.実行委員会と各団体のものです。時刻・教室・予約・メニューなどの一部は、公式パンフ・ポスター・公式サイトから補いました。</p>
-    ${upd ? `<p>学祭ポータルの内容が最後に変わったのは ${esc(upd)} です（1 時間ごとに確かめています）。</p>` : ""}
+    ${upd && $("thanks").hidden ? `<p>学祭ポータルの内容が最後に変わったのは ${esc(upd)} です（1 時間ごとに確かめています）。</p>` : ""}
     ${sourcesHTML()}`;
 
   renderInfo();
