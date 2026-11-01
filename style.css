@@ -290,7 +290,6 @@ table.ledger { width: 100%; border-collapse: collapse; }
 footer.site { margin: 36px 4px 28px; color: var(--sub); font-size: 13px; }
 footer.site p { margin: 4px 0; }
 .sources { margin: 20px -4px 0; color: var(--fg); font-size: 14px; }
-.sources h2 { font-size: 17px; font-weight: 800; margin: 0 4px 8px; }
 .sources ul { list-style: none; margin: 0; padding: 0; background: var(--card); border-radius: var(--r-card); overflow: hidden; }
 .sources li { padding: 10px 16px; }
 .sources li + li { border-top: 1px solid var(--sep); }
@@ -298,7 +297,10 @@ footer.site p { margin: 4px 0; }
 .sources .src-what { color: var(--sub); margin-left: 8px; }
 .sources .src-url { display: block; overflow-wrap: anywhere; }
 .sources details { margin-top: 10px; background: var(--card); border-radius: var(--r-card); overflow: hidden; }
-.sources summary { min-height: var(--tap); padding: 0 16px; display: flex; align-items: center; cursor: pointer; font-weight: 700; }
+.sources summary { min-height: var(--tap); padding: 0 16px; display: flex; align-items: center; justify-content: space-between; gap: 8px; list-style: none; cursor: pointer; font-weight: 700; }
+.sources summary::-webkit-details-marker { display: none; }
+@media (prefers-reduced-motion: no-preference) { .sources summary .chev { transition: transform .2s; } }
+.sources details[open] > summary .chev { transform: rotate(90deg); }
 .sources details ul { border-radius: 0; border-top: 1px solid var(--sep); }
 
 /* 詳細：スマホは下から出るシート、広い画面は中央のカード */

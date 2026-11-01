@@ -496,9 +496,10 @@ function sourcesHTML() {
   const li = (label, what, url) => `<li><span class="src-label">${esc(label)}</span>${what ? `<span class="src-what">${esc(what)}</span>` : ""}`
     + (url ? `<a class="src-url" href="${esc(safeUrl(url))}" target="_blank" rel="noopener">${esc(shown(url))}</a>` : "") + `</li>`;
   const evs = [...EVENTS].sort((a, b) => a.title.localeCompare(b.title, "ja"));
-  return `<section class="sources" aria-labelledby="src-h"><h2 id="src-h">参考（一次情報）</h2>
-    <ul>${(FEST.sources || []).map((x) => li(x.label, x.what, x.url)).join("")}</ul>
-    <details><summary>企画ごとのページ（${evs.length}件）</summary><ul>${evs.map((e) => li(e.title, "", e.url)).join("")}</ul></details>
+  // どちらも最初は閉じておき、押すと開く
+  return `<section class="sources" aria-label="参考">
+    <details><summary>参考（一次情報）${CHEV}</summary><ul>${(FEST.sources || []).map((x) => li(x.label, x.what, x.url)).join("")}</ul></details>
+    <details><summary>企画ごとのページ（${evs.length}件）${CHEV}</summary><ul>${evs.map((e) => li(e.title, "", e.url)).join("")}</ul></details>
   </section>`;
 }
 
